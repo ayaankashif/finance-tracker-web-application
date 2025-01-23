@@ -47,9 +47,11 @@ public class IncomeServlet extends HttpServlet {
 		String incomeSource = request.getParameter("incomeSource");
 		String income = request.getParameter("income");
 		
-		AccountTransactionDAO accountDAO = new AccountTransactionDAOImpl();
-		AccountTransaction accountIMPL = new AccountTransaction(null, "debit", 200.00 , null);
-		accountDAO.saveTransaction(accountIMPL);	
+		/*
+		 * AccountTransactionDAO accountDAO = new AccountTransactionDAOImpl();
+		 * AccountTransaction accountIMPL = new AccountTransaction(null, "debit", 200.00
+		 * , null); accountDAO.saveTransaction(accountIMPL);
+		 */	
 		
 		System.out.println("DB is working");
 		
