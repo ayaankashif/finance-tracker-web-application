@@ -94,18 +94,23 @@ public class IncomeExpenseSourcesDAOImpl implements IncomeExpenseSourcesDAO {
         }
     }
 
-    public List<IncomeExpenseSources> getAllIncomeExpenseSources(char type) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM IncomeExpenseSources WHERE type = :type";
-            return session.createQuery(hql, IncomeExpenseSources.class)
-                    .setParameter("type", type)
-                    .list();
-        }
-    }
+    // public List<IncomeExpenseSources> getAllIncomeExpenseSources(char type) {
+    //     try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+    //         String hql = "FROM IncomeExpenseSources WHERE type = :type";
+    //         return session.createQuery(hql, IncomeExpenseSources.class)
+    //                 .setParameter("type", type)
+    //                 .list();
+    //     }
+    // }
 
     public List<IncomeExpenseSources> getAllIncomeExpenseSource() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("from IncomeExpenseSources", IncomeExpenseSources.class).list();
         }
+    }
+
+    @Override
+    public List<IncomeExpenseSources> getAllIncomeExpenseSources(char type) {
+        throw new UnsupportedOperationException("Unimplemented method 'getAllIncomeExpenseSources'");
     }
 }

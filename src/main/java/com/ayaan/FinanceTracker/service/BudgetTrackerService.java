@@ -51,11 +51,11 @@ public class BudgetTrackerService {
                     System.out.println("Error: Monthly Goal must be a positive number.");
                     goal = null; // Reset to retry
                 }
-                throw new InputMismatchException("Error: Invalid input. Please enter a numeric value.");
             }
 
             incomeExpenseSourcesImpl.monthlyGoal(source, goal);
             Double incomeValue = incomeDAO.getIncomeBySourceFromIncomes(source);
+            System.out.println(incomeValue);
 
             Double remaining = goal - incomeValue;
             Double progress = (incomeValue / goal) * 100;
@@ -146,7 +146,6 @@ public class BudgetTrackerService {
                     System.out.println("Error: Monthly Goal must be a positive number.");
                     budget = null; // Reset to retry
                 }
-                throw new InputMismatchException("Invalid input. Please enter a numeric value.");
             }
 
             incomeExpenseSourcesImpl.monthlyGoal(expenseSource, budget);
@@ -179,7 +178,6 @@ public class BudgetTrackerService {
             logger.error("An unexpected error occurred: {}", e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     public void IncomeOverviewDisplay() {
@@ -256,7 +254,6 @@ public class BudgetTrackerService {
                 }
 
                 Double remaining = allocatedAmount + currentExpense;
-
                 System.out.printf("%-17s %-20.2f %-15.2f %-15s %-15.2f%n", name, budgetPer, allocatedAmount,
                         Math.abs(currentExpense),
                         remaining);
@@ -279,7 +276,7 @@ public class BudgetTrackerService {
 
             System.out.println("\nExpense Overview ");
             System.out.printf("%-15s %-15s %-15s %-15s %-15s %-15s%n",
-                    "Name", "Current Month", "Monthly Goal", "Remaining", "Progress", "Budget Tracker");
+                    "Name", "Current Month", "Monthly Budget", "Remaining", "Progress", "Budget Tracker");
             System.out.println(
                     "-----------------------------------------------------------------------------------------------");
             for (Object[] record : budgetTracker) {

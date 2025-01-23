@@ -107,33 +107,36 @@ public class ExpenseService {
                 String source = scanner.nextLine();
                 incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(source);
                 if (incomeExpenseSources == null) {
-                    throw new DataAccessException(" No Expense Source found.");
+                    logger.info("No Expense Source Found!");
                 }
             }
 
             System.out.println("Expense ID: ");
             Integer id = scanner.nextInt();
-            Expense ex = expenseDAO.getExpensebyId(id);
-            if (ex == null) {
-                logger.info("No expense with this ID");
-                return;
-            }
+            Expense expense1 = expenseDAO.getExpensebyId(id);
 
-            if (!ex.getName().equalsIgnoreCase(name)) {
+            if (!expense1.getName().equalsIgnoreCase(name)) {
                 throw new InvalidIDException("The ID doesn't match your records. Aborting update");
             }
 
-            Double updatedExpense = ex.getExpense() + exp;
-            ex.setExpense(updatedExpense);
+            System.out.println("\nPress '1' to add income into your existing amount.\nPress '2' to Rectify your actual amount");
+            Integer choice = scanner.nextInt();
 
-            Expense expense = new Expense(id, name, bankAccount, updatedExpense, incomeExpenseSources,
-                    new Date(System.currentTimeMillis()));
+            if (choice == 1) {
+                Double updatedExpense = expense1.getExpense() + exp;
+                expense1.setExpense(updatedExpense);
+                logger.info("\nUpdated Total Expense: " + updatedExpense);
+                accountTransactionImpl.addTransaction(bankAccount, "Debit", exp);
+                accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + exp);
+                expenseDAO.updateExpense(expense1);
 
-            accountTransactionImpl.addTransaction(bankAccount, "Debit", exp);
-            accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + exp);
-
-            expenseDAO.updateExpense(expense);
-
+            } else if (choice == 2) {
+                Expense expense2 = new Expense(id, name, bankAccount, exp, incomeExpenseSources,
+                        new Date(System.currentTimeMillis()));
+                        
+                expenseDAO.updateExpense(expense2);
+                logger.info("\nExpense Updated.");
+            }
         } catch (InvalidIDException e) {
             logger.error("No ID found: {}", e.getMessage());
         } catch (DataAccessException e) {
@@ -178,11 +181,11 @@ public class ExpenseService {
             }
 
             System.out.println("\nExpenses List: ");
-            System.out.printf("%-12s %-17s %-15s %-15s%n",
+            System.out.printf("%-12s %-15s %-15s %-15s%n",
                     "Expense ID", "Name", "Expense Source", "Expense");
             System.out.println("-----------------------------------------------------------");
 
-            expenses.forEach(expense -> System.out.printf("%-12s %-17s %-15s %-15s%n",
+            expenses.forEach(expense -> System.out.printf("%-12s %-15s %-15s %-15s%n",
                     expense.getExpenseId(),
                     expense.getName(),
                     expense.getExpenseSourceId().getIncomeExpenseSource(),

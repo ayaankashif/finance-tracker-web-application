@@ -85,10 +85,17 @@ public class AccountTransactionDAOImpl implements AccountTransactionDAO {
 
     public List<Object[]> accountDashboard() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
+
             String hql = "SELECT ba.bankAccId, ba.name, sum(at.transactionAmt) FROM AccountTransaction at " +
-                    "JOIN at.bankAccId ba " +
+                    "JOIN at.bankAccId ba WHERE at.transactionDate BETWEEN :startDate AND :endDate " +
                     "GROUP BY at.bankAccId";
-            return session.createQuery(hql, Object[].class).list();
+            return session.createQuery(hql, Object[].class)
+                    .setParameter("startDate", Date.valueOf(startDate))
+                    .setParameter("endDate", Date.valueOf(endDate))
+                    .list();
         }
     }
 

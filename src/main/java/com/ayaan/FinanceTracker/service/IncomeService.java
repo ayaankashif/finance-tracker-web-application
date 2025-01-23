@@ -12,6 +12,7 @@ import com.ayaan.FinanceTracker.daoImpl.IncomeDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.exceptionHandling.InvalidIDException;
+import com.ayaan.FinanceTracker.exceptionHandling.invalidInputException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
 import com.ayaan.FinanceTracker.models.Income;
@@ -102,36 +103,40 @@ public class IncomeService {
                 String incomeSource = scanner.nextLine();
                 incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(incomeSource);
                 if (incomeExpenseSources == null) {
-                    throw new DataAccessException("\nError: No Income Source found.");
+                    logger.info("No Income Source Found!");
                 }
             }
 
             System.out.println("Income ID: ");
             Integer id = scanner.nextInt();
             Income existingIncome = incomeDAO.getIncomebyId(id);
-            if (existingIncome == null) {
-                logger.info("No Income found with this ID");
-                return;
-            }
 
             if (!existingIncome.getName().equalsIgnoreCase(name)) {
                 throw new InvalidIDException("The ID doesn't match your records. Aborting update");
             }
 
-            Double updatedAmount = existingIncome.getIncome() + income;
-            existingIncome.setIncome(updatedAmount);
+            System.out.println("\nPress '1' to add income into your existing amount.\nPress '2' to Rectify your actual amount");
+            Integer choice = scanner.nextInt();
 
-            logger.info("Updated Total Income: " + updatedAmount);
+            if (choice == 1) {
+                Double updatedAmount = existingIncome.getIncome() + income;
+                existingIncome.setIncome(updatedAmount);
+                logger.info("Updated Total Income: " + updatedAmount);
+                accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + income);
+                accountTransactionImpl.addTransaction(bankAccount, "Credit", income);
+                incomeDAO.updateIncome(existingIncome);
 
-            Income income1 = new Income(id, name, bankAccount, updatedAmount, incomeExpenseSources,
-                    new Date(System.currentTimeMillis()));
-
-            accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + income);
-            accountTransactionImpl.addTransaction(bankAccount, "Credit", income);
-
-            incomeDAO.updateIncome(income1);
-
-        }catch (InvalidIDException e) {
+            } else if (choice == 2) {
+                Income income1 = new Income(id, name, bankAccount, income, incomeExpenseSources,
+                        new Date(System.currentTimeMillis()));
+                        
+                incomeDAO.updateIncome(income1);
+            } else {
+                throw new invalidInputException("Invalid choice ");
+            }
+        } catch (invalidInputException e) {
+            logger.error("Invalid input found: {}", e.getMessage());
+        } catch (InvalidIDException e) {
             logger.error("No ID found: {}", e.getMessage());
         } catch (NoSuchElementException e) {
             logger.error("No matching element found: {}", e.getMessage());
@@ -168,7 +173,7 @@ public class IncomeService {
             if (incomes == null) {
                 throw new DataAccessException("NO Incomes Found");
             }
-            
+
             System.out.println("\nIncomes List: ");
             System.out.printf("%-12s %-17s %-15s %-15s%n",
                     "Income ID", "Name", "Income Source", "Income");
@@ -179,7 +184,7 @@ public class IncomeService {
                     income.getIncomeSources().getIncomeExpenseSource(),
                     income.getIncome()));
 
-        } catch(DataAccessException e){  
+        } catch (DataAccessException e) {
             logger.error("Database error while fetching income sources: {}", e.getMessage());
         } catch (Exception e) {
             logger.info("An unexpected error occurred.");

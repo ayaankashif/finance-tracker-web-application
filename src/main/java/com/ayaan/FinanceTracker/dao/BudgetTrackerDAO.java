@@ -14,8 +14,6 @@ public interface BudgetTrackerDAO {
     
     BudgetTracker getBudgetById(Integer id);
     
-    List<Object[]> getBankTransaction();
-    
     List<Object[]> displayIncome();
     
     List<Object[]> displayExpense();

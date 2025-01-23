@@ -101,7 +101,7 @@ public class MenuService {
         System.out.println("2. Add Income");
         System.out.println("3. Update Income");
         System.out.println("4. List Income ");
-        System.out.println("6. Back to finance Tracker");
+        System.out.println("5. Back to finance Tracker");
         Scanner scanner = new Scanner(System.in);
         Integer input = scanner.nextInt();
 
@@ -133,7 +133,7 @@ public class MenuService {
         System.out.println("2. Add Expense");
         System.out.println("3. Update Expense");
         System.out.println("4. List Expense");
-        System.out.println("6. Back to finance Tracker");
+        System.out.println("5. Back to finance Tracker");
         Scanner scanner = new Scanner(System.in);
         Integer input = scanner.nextInt();
 

@@ -1,5 +1,8 @@
 package com.ayaan.FinanceTracker.daoImpl;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -68,28 +71,35 @@ public class ExpenseDAOImpl implements ExpenseDAO {
 
     public List<Expense> getAllExpense() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Expense", Expense.class).list();
-        }
-    }
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
 
-    public Double getExpenses() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT e.expense FROM Expense e ";
-            return session.createQuery(hql, Double.class).uniqueResult(); 
+            String hql = "FROM Expense e WHERE e.date BETWEEN :startDate AND :endDate";
+            return session.createQuery(hql, Expense.class)
+                    .setParameter("startDate", Date.valueOf(startDate))
+                    .setParameter("endDate", Date.valueOf(endDate))
+                    .list();
         }
     }
 
     public Double getExpenseBySourceFromExpense(String source) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
+
             String hql = "SELECT e.expense FROM Expense e " +
-                         "JOIN e.incomeExpenseSourceId ies " +
-                         "WHERE ies.incomeExpenseSource = :source";
+                    "JOIN e.incomeExpenseSourceId ies " +
+                    "WHERE ies.incomeExpenseSource = :source AND e.date BETWEEN :startDate AND :endDate";
             Query query = session.createQuery(hql);
             query.setParameter("source", source);
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
 
             try {
                 return (Double) query.getSingleResult();
-                
+
             } catch (NoResultException e) {
                 System.out.println("No income found for the given source.");
                 return null;
@@ -97,14 +107,6 @@ public class ExpenseDAOImpl implements ExpenseDAO {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }
-    }
-
-    public Double getExpensesBySourceId(Integer id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT e.expense FROM Expense e " + 
-                        "JOIN e.incomeExpenseSourceId bt ";
-            return session.createQuery(hql, Double.class).uniqueResult(); 
         }
     }
 }

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.BankAlreadyExistException;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.exceptionHandling.InvalidIDException;
+import com.ayaan.FinanceTracker.exceptionHandling.invalidInputException;
 import com.ayaan.FinanceTracker.models.BankAccount;
 
 public class BankAccountService {
@@ -47,8 +49,8 @@ public class BankAccountService {
             String name = scanner.nextLine();
             System.out.println("Bank Account ID: ");
             Integer id = scanner.nextInt();
+            
             BankAccount bankAccount = new BankAccount(id, name, new Date(System.currentTimeMillis()));
-
             bankAccountDAO.updateBankAccount(bankAccount);
             logger.info("Bank Account Updated");
 

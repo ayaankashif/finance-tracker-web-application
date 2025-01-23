@@ -6,7 +6,6 @@ import com.ayaan.FinanceTracker.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -74,24 +73,9 @@ public class BankAccountDAOImpl implements BankAccountDAO {
         }
     }
 
-	@Override
-	public List<BankAccount> getAllBankAccounts() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-//    public List<BankAccount> getAllBankAccounts() {
-//        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-//
-//            YearMonth currentMonth = YearMonth.now();
-//            LocalDate startDate = currentMonth.atDay(1);
-//            LocalDate endDate = currentMonth.atEndOfMonth();
-//
-//        //     String hql = "SELECT ba.name,  from BankAccount WHERE accountDate BETWEEN :startDate AND :endDate";
-//        //     return session.createQuery(hql,BankAccount.class)
-//        //             .setParameter("startDate", Date.valueOf(startDate))
-//        //             .setParameter("endDate", Date.valueOf(endDate))
-//        //             .list();
-//        // }
-//    }
+    public List<BankAccount> getAllBankAccounts() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("from BankAccount", BankAccount.class).list();
+        }
+    }
 }

@@ -66,36 +66,33 @@ public class BudgetTrackerDAOImpl implements BudgetTrackerDAO {
         }
     }
 
-    public List<Object[]> getBankTransaction() {
+    public List<Object[]> displayIncome() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
             YearMonth currentMonth = YearMonth.now();
             LocalDate startDate = currentMonth.atDay(1);
             LocalDate endDate = currentMonth.atEndOfMonth();
 
-            String hql = "SELECT ba.name, at.transactionAmt, at.transactionType FROM AccountTransaction at " +
-                    "JOIN at.bankAccId ba " +
-                    "WHERE at.transactionDate BETWEEN :startDate AND :endDate";
+            String hql = "SELECT i.name, i.income, ies.monthlyBudget FROM Income i " +
+                    "JOIN i.incomeSources ies WHERE i.date BETWEEN :startDate AND :endDate";
             return session.createQuery(hql, Object[].class)
                     .setParameter("startDate", Date.valueOf(startDate))
                     .setParameter("endDate", Date.valueOf(endDate))
-                    .list();
+                    .getResultList();
         }
     }
 
-    public List<Object[]> displayIncome() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT i.name, i.income, ies.monthlyBudget FROM Income i " +
-                    "JOIN i.incomeSources ies";
-            return session.createQuery(hql, Object[].class).getResultList();
-        }
-    }
-    
     public List<Object[]> displayExpense() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
+
             String hql = "SELECT e.name, e.expense, ies.monthlyBudget, bt.name FROM Expense e " +
-                    "JOIN e.incomeExpenseSourceId ies LEFT JOIN ies.budgetTracker bt";
-            return session.createQuery(hql, Object[].class).getResultList();
+                    "JOIN e.incomeExpenseSourceId ies LEFT JOIN ies.budgetTracker bt WHERE e.date BETWEEN :startDate AND :endDate";
+            return session.createQuery(hql, Object[].class)
+                    .setParameter("startDate", Date.valueOf(startDate))
+                    .setParameter("endDate", Date.valueOf(endDate))
+                    .getResultList();
         }
     }
 

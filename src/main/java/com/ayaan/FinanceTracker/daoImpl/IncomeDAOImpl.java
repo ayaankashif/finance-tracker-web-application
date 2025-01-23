@@ -1,5 +1,8 @@
 package com.ayaan.FinanceTracker.daoImpl;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -68,28 +71,48 @@ public class IncomeDAOImpl implements IncomeDAO {
 
     public List<Income> getAllIncome() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Income", Income.class).list();
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
+
+            return session.createQuery("from Income i WHERE i.date BETWEEN :startDate AND :endDate", Income.class)
+                    .setParameter("startDate", Date.valueOf(startDate))
+                    .setParameter("endDate", Date.valueOf(endDate))
+                    .list();
         }
     }
 
     public Double getIncomes() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT SUM(i.income) FROM Income i";
-            return session.createQuery(hql, Double.class).uniqueResult(); 
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
+
+            String hql = "SELECT SUM(i.income) FROM Income i WHERE i.date BETWEEN :startDate AND :endDate";
+            return session.createQuery(hql, Double.class)
+                    .setParameter("startDate", Date.valueOf(startDate))
+                    .setParameter("endDate", Date.valueOf(endDate))
+                    .uniqueResult();
         }
     }
 
     public Double getIncomeBySourceFromIncomes(String source) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            YearMonth currentMonth = YearMonth.now();
+            LocalDate startDate = currentMonth.atDay(1);
+            LocalDate endDate = currentMonth.atEndOfMonth();
+
             String hql = "SELECT i.income FROM Income i " +
-                         "JOIN i.incomeSources ies " +
-                         "WHERE ies.incomeExpenseSource = :source";
+                    "JOIN i.incomeSources ies " +
+                    "WHERE ies.incomeExpenseSource = :source AND i.date BETWEEN :startDate AND :endDate";
             Query query = session.createQuery(hql);
             query.setParameter("source", source);
-
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+            
             try {
                 return (Double) query.getSingleResult();
-                
+
             } catch (NoResultException e) {
                 System.out.println("No income found for the given source.");
                 return null;
@@ -100,5 +123,5 @@ public class IncomeDAOImpl implements IncomeDAO {
             return null;
         }
     }
-    
+
 }
