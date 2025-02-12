@@ -1,5 +1,6 @@
 package com.ayaan.FinanceTracker.daoImpl;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -17,18 +18,23 @@ import jakarta.persistence.Query;
 
 public class IncomeDAOImpl implements IncomeDAO {
 
-    public void saveIncome(Income income) {
+    public boolean saveIncome(Income income) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(income);
+            Serializable id = (Serializable) session.save(income);
             transaction.commit();
+            if(id != null) {
+            	return true;
+            }
+            
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
-            }
+            } 
             e.printStackTrace();
         }
+        return false;
     }
 
     public void updateIncome(Income income) {

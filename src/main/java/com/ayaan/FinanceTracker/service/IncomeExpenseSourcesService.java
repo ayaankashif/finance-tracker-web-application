@@ -1,6 +1,10 @@
 package com.ayaan.FinanceTracker.service;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.models.BudgetTracker;
+//import com.ayaan.FinanceTracker.models.Income;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
 
 public class IncomeExpenseSourcesService {
@@ -18,7 +23,7 @@ public class IncomeExpenseSourcesService {
     public void addIncomeExpenseSource(String incomeExpenseSource, char type, BudgetTracker budgetTracker ) {
         try {
             if (incomeExpenseSource == null || incomeExpenseSource.isEmpty()) {
-                throw new IllegalArgumentException("Income source cannot be null or empty");
+                throw new IllegalArgumentException("Income/Expense source cannot be null or empty");
             }
 
             IncomeExpenseSources incomeExpenseSources = new IncomeExpenseSources(incomeExpenseSource, type, budgetTracker);
@@ -41,25 +46,37 @@ public class IncomeExpenseSourcesService {
         }
     }
 
-    public void listSources() {
+    public void listSources(HttpServletResponse response) throws IOException {
+    	
+    	response.setContentType("text/html");
+    	PrintWriter out = response.getWriter();
         try {
             List<IncomeExpenseSources> sources = incomeExpenseSourcesDAO.getAllIncomeExpenseSource();
             if (sources == null) {
                 throw new DataAccessException("No Sources found");
             }
-
-            System.out.println("\nSources List: ");
-            System.out.printf("%-15s %-15s%n",
-                    "Sources" , "Type");
-            System.out.println("---------------------");
-            sources.forEach(incomeExpenseSources -> System.out.printf("%-15s %-15s%n",
-                    incomeExpenseSources.getIncomeExpenseSource(), incomeExpenseSources.getType()));
+            
+            out.println("<html><head><title>Income Sources List</title></head><body>");
+    		out.println("<html><head><link href = \"Style.css\" rel = \"stylesheet\"></head><body>");
+    		out.println("<h1>Incomes List:</h1>");
+    		out.println("<table border='1'>");
+    		out.println("<tr><th>Sources</th></tr>");
+    		
+    		for (IncomeExpenseSources incExpSrc : sources) {
+    			out.println("<tr>");
+    			out.println("<td>" + incExpSrc.getIncomeExpenseSource() + "</td>");
+    			out.println("</tr>");
+    		}
+    			out.println("</table>");
+    			out.println("</body></html>");
 
         } catch(DataAccessException e){  
             logger.error("Database error while fetching income sources: {}", e.getMessage());
         } catch (Exception e) {
             logger.info("An unexpected error occurred.");
             e.printStackTrace();
-        }
+        } finally {
+			out.close();
+		}
     }
 }

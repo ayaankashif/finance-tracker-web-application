@@ -6,7 +6,7 @@ import com.ayaan.FinanceTracker.models.Expense;
 
 public interface ExpenseDAO {
 
-    void saveExpense(Expense expense);
+    boolean saveExpense(Expense expense);
     
     void updateExpense(Expense expense);
     

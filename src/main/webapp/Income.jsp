@@ -1,7 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
 <html>
 <head>
-<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
- -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Finance Tracker</title>
 </head>
 
@@ -10,13 +13,13 @@
     <form action="IncomeServlet" method="post">
         <input type="hidden" name="action" value="addIncome" />
         <label>Name:</label>
-        <input type="text" name="name" required /><br />
+        <input type="text" name="name" /><br />
         <label>Bank Account:</label>
-        <input type="text" name="bankAccount" required /><br />
+        <input type="text" name="bankAccount" /><br />
         <label>Income Source:</label>
-        <input type="text" name="incomeSource" required /><br />
+        <input type="text" name="incomeSource" /><br />
         <label>Income:</label>
-        <input type="text" name="income" required /><br />
+        <input type="text" name="income" /><br />
         <button type="submit">Add Income</button>
     </form>
     <hr />
@@ -42,6 +45,6 @@
      </c:forEach>
   </tbody>
 </table>
+
 </body>
 </html>
-

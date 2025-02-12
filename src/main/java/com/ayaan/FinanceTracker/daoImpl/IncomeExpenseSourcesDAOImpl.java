@@ -1,5 +1,6 @@
 package com.ayaan.FinanceTracker.daoImpl;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -12,32 +13,42 @@ import jakarta.persistence.Query;
 
 public class IncomeExpenseSourcesDAOImpl implements IncomeExpenseSourcesDAO {
 
-    public void saveIncomeExpenseSource(IncomeExpenseSources incomeExpenseSources) {
+    public boolean saveIncomeExpenseSource(IncomeExpenseSources incomeExpenseSources) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(incomeExpenseSources);
+            Serializable id = (Serializable) session.save(incomeExpenseSources);
             transaction.commit();
+            if(id != null) {
+            	return true;
+            }
+            
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void updateIncomeExpenseSources(IncomeExpenseSources incomeExpenseSources) {
+    public boolean updateIncomeExpenseSources(IncomeExpenseSources incomeExpenseSources) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.update(incomeExpenseSources);
+            Serializable id = (Serializable) session.save(incomeExpenseSources);
             transaction.commit();
+            if(id != null) {
+            	return true;
+            }
+            
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
         }
+        return false;
     }
 
     public void updateMonthlyBudget(String sourceName, Double newBudget) {

@@ -1,0 +1,179 @@
+@charset "UTF-8";
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: system-ui, -apple-system, sans-serif;
+ }
+
+body {
+	background-color: #f5f5f5;
+	padding: 2rem;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 2rem;
+}
+
+.search-container {
+	position: relative;
+}
+
+.search-input {
+	padding: 0.5rem 1rem 0.5rem 2.5rem;
+	border: 1px solid #e2e8f0;
+	border-radius: 0.375rem;
+	width: 300px;
+}
+
+.search-icon {
+	position: absolute;
+	left: 0.75rem;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #64748b;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.user-avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.welcome {
+	margin-bottom: 2rem;
+}
+
+.welcome h1 {
+	font-size: 2rem;
+	margin-bottom: 0.5rem;
+}
+
+.welcome p {
+	color: #64748b;
+}
+
+.tabs {
+	margin-bottom: 2rem;
+}
+
+.tab-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.tab-buttons {
+	display: flex;
+	gap: 1rem;
+}
+
+.tab-btn {
+	padding: 0.5rem 1rem;
+	border: none;
+	background: none;
+	cursor: pointer;
+	border-radius: 0.375rem;
+}
+
+.tab-btn.active {
+	background-color: #e2e8f0;
+}
+
+.add-account-btn {
+	padding: 0.5rem 1rem;
+	background-color: white;
+	border: 1px solid #e2e8f0;
+	border-radius: 0.375rem;
+	cursor: pointer;
+}
+
+.metrics {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+.metric-card {
+	background-color: white;
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-card h3 {
+	color: #64748b;
+	font-size: 0.875rem;
+	margin-bottom: 0.5rem;
+}
+
+.metric-value {
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+.tables-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+}
+
+.left-tables {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.right-table {
+	height: 100%;
+}
+
+.table-card {
+	background-color: white;
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table-card h2 {
+	margin-bottom: 1rem;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 0.75rem;
+	text-align: left;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+	color: #64748b;
+	font-weight: 500;
+}
+
+.amount {
+	text-align: right;
+}
+
+@media ( max-width : 1024px) {
+	.tables-container {
+		grid-template-columns: 1fr;
+	}
+}

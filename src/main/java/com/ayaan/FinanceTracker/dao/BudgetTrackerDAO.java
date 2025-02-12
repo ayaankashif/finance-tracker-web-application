@@ -6,7 +6,7 @@ import com.ayaan.FinanceTracker.models.BudgetTracker;
 
 public interface BudgetTrackerDAO {
 
-    void saveBudget(BudgetTracker budgetTracker);
+    boolean saveBudget(BudgetTracker budgetTracker);
     
     void updateBudget(BudgetTracker budgetTracker);
     

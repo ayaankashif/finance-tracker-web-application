@@ -18,5 +18,5 @@ public interface IncomeDAO {
 
     Double getIncomeBySourceFromIncomes(String source);
 
-    void saveIncome(Income income);
+    boolean saveIncome(Income income);
 }

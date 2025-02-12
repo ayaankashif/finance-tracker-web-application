@@ -6,9 +6,9 @@ import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
 
 public interface IncomeExpenseSourcesDAO {
 
-    void saveIncomeExpenseSource(IncomeExpenseSources incomeExpenseSources);
+    boolean saveIncomeExpenseSource(IncomeExpenseSources incomeExpenseSources);
 
-    void updateIncomeExpenseSources(IncomeExpenseSources incomeExpenseSources);
+    boolean updateIncomeExpenseSources(IncomeExpenseSources incomeExpenseSources);
 
     void updateMonthlyBudget(String sourceName, Double newBudget);
 

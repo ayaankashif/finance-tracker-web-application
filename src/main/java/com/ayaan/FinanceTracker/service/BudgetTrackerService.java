@@ -1,5 +1,6 @@
 package com.ayaan.FinanceTracker.service;
 
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -83,44 +84,33 @@ public class BudgetTrackerService {
         }
     }
 
-    public void setBudget() {
-        try {
-            System.out.println("Budget Name: ");
-            Scanner scanner = new Scanner(System.in);
-            String name = scanner.nextLine();
-
-            System.out.println("Budget % :  ");
-            Double budget = scanner.nextDouble();
-
+    public boolean setBudget(String name, String budget) throws SQLException {
+    
             Double totalPercentage = 0.0;
             for (BudgetTracker budgetTracker : budgetTrackerDAO.getAllBudgets()) {
                 totalPercentage += budgetTracker.getBudgetPercentage();
-
-                throw new DataAccessException("No Budget Found! ");
+                logger.info("No Budget Found! ");
             }
-
-            if (totalPercentage + budget > 100) {
+            
+            double budgetValue =  Double.parseDouble(budget);
+            if (totalPercentage + budgetValue > 100) {
                 System.out.println("Total percentage exceeds 100%. Remaining percent bar = " +
                         (100 - totalPercentage) + "%");
-                return;
+                return false;
             }
 
             BudgetTracker budgetTracker = new BudgetTracker(
                     name,
                     null,
-                    budget,
+                    Double.parseDouble(budget),
                     null);
 
             budgetTrackerDAO.saveBudget(budgetTracker);
             logger.info("Budget saved successfully! Remaining percentage: "
-                    + (100 - totalPercentage - budget) + "%.");
+                    + (100 - totalPercentage - Double.parseDouble(budget)) + "%.");
 
-        } catch (DataAccessException e) {
-            logger.error("Database access error: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("An unexpected error occurred: {}", e.getMessage());
-            e.printStackTrace();
-        }
+ 
+        return false;
     }
 
     public void expenseOverview() {

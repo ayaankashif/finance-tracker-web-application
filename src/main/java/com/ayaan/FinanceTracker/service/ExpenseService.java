@@ -1,8 +1,13 @@
 package com.ayaan.FinanceTracker.service;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +21,7 @@ import com.ayaan.FinanceTracker.exceptionHandling.InvalidIDException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
 import com.ayaan.FinanceTracker.models.Expense;
+import com.ayaan.FinanceTracker.models.Income;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
 
 public class ExpenseService {
@@ -29,54 +35,38 @@ public class ExpenseService {
     AccountTransaction accountTransaction = new AccountTransaction();
     BudgetTrackerDAOImpl budgetTrackerDAO = new BudgetTrackerDAOImpl();
 
-    public void addExpense() {
-        try {
-            System.out.println("Name:");
-            Scanner scanner = new Scanner(System.in);
-            String name = scanner.nextLine();
-
-            System.out.println("Expense:");
-            Double expense = scanner.nextDouble();
-            if (expense > 0) {
-                expense = -expense;
+    public boolean addExpense(String name, String bankAccountName, String expense, String expenseSource) throws DataAccessException  {
+       
+        	double expenseValue = Double.parseDouble(expense);
+        	
+            if (expenseValue > 0) {
+            	expenseValue = -expenseValue;
             }
-
+          
             BankAccount bankAccount = null;
-            while (bankAccount == null) {
-                System.out.println("Bank Account:");
-                String bankAcc = scanner.nextLine();
-                bankAccount = bankAccountDAO.getBankAccountByCondition(bankAcc);
+                bankAccount = bankAccountDAO.getBankAccountByCondition(bankAccountName);
                 if (bankAccount == null) {
                     throw new DataAccessException(
                             "\nError: No Bank account found. Please enter a valid bank account name.");
                 }
-            }
 
             IncomeExpenseSources incomeExpenseSources = null;
-            while (incomeExpenseSources == null) {
-                System.out.println("Expense Source:");
-                String expenseSource = scanner.nextLine();
                 incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(expenseSource);
                 if (incomeExpenseSources == null) {
                     throw new DataAccessException("No Expense source found.");
                 }
-            }
 
-            Expense expense1 = new Expense(name, bankAccount, expense, incomeExpenseSources,
+            Expense expense1 = new Expense(name, bankAccount, Double.parseDouble(expense), incomeExpenseSources,
                     new Date(System.currentTimeMillis()));
 
-            accountTransactionImpl.addTransaction(bankAccount, "Debit", expense);
-            accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + expense);
+            accountTransactionImpl.addTransaction(bankAccount, "Debit", Double.parseDouble(expense));
+            accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + Double.parseDouble(expense));
 
             expenseDAO.saveExpense(expense1);
             logger.info("\nExpense added successfully");
 
-        } catch (DataAccessException e) {
-            logger.error("Database error while fetching income sources: {}", e.getMessage());
-        } catch (Exception e) {
-            System.out.println("\nError: Invalid input");
-            e.printStackTrace();
-        }
+        
+        return false;
     }
 
     public void updateExpense() {
@@ -147,20 +137,12 @@ public class ExpenseService {
         }
     }
 
-    public void addExpenseSource() {
+    public boolean addExpenseSource(String expenseSource, String budget) {
         try {
-            System.out.println("Expense Source:");
-            Scanner scanner = new Scanner(System.in);
-            String expenseSource = scanner.nextLine();
-
             BudgetTracker budgetTracker = null;
-            while (budgetTracker == null) {
-                System.out.println("Enter your budget Name to link this source: ");
-                String name = scanner.nextLine();
-                budgetTracker = budgetTrackerDAO.getBudgetByCondition(name);
+                budgetTracker = budgetTrackerDAO.getBudgetByCondition(budget);
                 if (budgetTracker == null) {
                     throw new DataAccessException("Error, no budget found ");
-                }
             }
 
             incomeExpenseSourcesImpl.addIncomeExpenseSource(expenseSource, 'E', budgetTracker);
@@ -171,25 +153,34 @@ public class ExpenseService {
             System.out.println("\nError: Invalid input");
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void listExpense() {
+    public void listExpense(HttpServletResponse response) throws IOException {
         try {
+        	response.setContentType("text/html");
+        	PrintWriter out = response.getWriter();
             List<Expense> expenses = expenseDAO.getAllExpense();
             if (expenses == null) {
                 throw new DataAccessException("No Expense Found!");
             }
 
-            System.out.println("\nExpenses List: ");
-            System.out.printf("%-12s %-15s %-15s %-15s%n",
-                    "Expense ID", "Name", "Expense Source", "Expense");
-            System.out.println("-----------------------------------------------------------");
+            out.println("<html><head><title>Income List</title></head><body>");
+    		out.println("<html><head><link href = \"Style.css\" rel = \"stylesheet\"></head><body>");
+    		out.println("<h1>Incomes List:</h1>");
+    		out.println("<table border='1'>");
+    		out.println("<tr><th>Expense ID</th><th>Name</th><th>Expense Source</th><th>Expense</th></tr>");
 
-            expenses.forEach(expense -> System.out.printf("%-12s %-15s %-15s %-15s%n",
-                    expense.getExpenseId(),
-                    expense.getName(),
-                    expense.getExpenseSourceId().getIncomeExpenseSource(),
-                    expense.getExpense()));
+    		for (Expense expense : expenses) {
+    			out.println("<tr>");
+    			out.println("<td>" + expense.getExpenseId() + "</td>");
+    			out.println("<td>" + expense.getName() + "</td>");
+    			out.println("<td>" + expense.getExpenseSourceId().getIncomeExpenseSource()+ "</td>");
+    			out.println("<td>" + expense.getExpense() + "</td>");
+    			out.println("</tr>");
+    		}
+    			out.println("</table>");
+    			out.println("</body></html>");
 
         } catch (DataAccessException e) {
             logger.error("Database error while fetching income sources: {}", e.getMessage());
