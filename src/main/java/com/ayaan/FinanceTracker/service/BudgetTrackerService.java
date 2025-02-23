@@ -1,9 +1,18 @@
 package com.ayaan.FinanceTracker.service;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +22,7 @@ import com.ayaan.FinanceTracker.daoImpl.ExpenseDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.exceptionHandling.ExceedsPercentageException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BudgetTracker;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
@@ -84,7 +94,7 @@ public class BudgetTrackerService {
         }
     }
 
-    public boolean setBudget(String name, String budget) throws SQLException {
+    public boolean setBudget(String name, String budget) throws SQLException, ExceedsPercentageException{
     
             Double totalPercentage = 0.0;
             for (BudgetTracker budgetTracker : budgetTrackerDAO.getAllBudgets()) {
@@ -94,9 +104,8 @@ public class BudgetTrackerService {
             
             double budgetValue =  Double.parseDouble(budget);
             if (totalPercentage + budgetValue > 100) {
-                System.out.println("Total percentage exceeds 100%. Remaining percent bar = " +
+                throw new ExceedsPercentageException("Total percentage exceeds 100%. Remaining percent bar = " +
                         (100 - totalPercentage) + "%");
-                return false;
             }
 
             BudgetTracker budgetTracker = new BudgetTracker(
@@ -109,7 +118,6 @@ public class BudgetTrackerService {
             logger.info("Budget saved successfully! Remaining percentage: "
                     + (100 - totalPercentage - Double.parseDouble(budget)) + "%.");
 
- 
         return false;
     }
 
@@ -170,33 +178,15 @@ public class BudgetTrackerService {
         }
     }
 
-    public void IncomeOverviewDisplay() {
+    public void IncomeOverviewDisplay(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<Object[]> budgetTracker = budgetTrackerDAO.displayIncome();
             if (budgetTracker == null || budgetTracker.isEmpty()) {
                 throw new DataAccessException("No Income Found!");
             }
-
-            System.out.println("\nIncome Overview ");
-            System.out.printf("%-15s %-15s %-15s %-15s %-15s%n",
-                    "Name", "Current Month", "Monthly Goal", "Remaining", "Progress");
-            System.out.println("------------------------------------------------------------------------");
-            for (Object[] record : budgetTracker) {
-                String Name = (String) record[0];
-                Double currentMonth = (Double) record[1];
-                Double monthlyGoal = (Double) record[2];
-
-                Double remaining = 0.0;
-                Double progress = 0.0;
-                if (incomeExpenseSources.getMonthlyBudget() != null && currentMonth != null || monthlyGoal != null) {
-                    remaining = monthlyGoal - currentMonth;
-                    progress = currentMonth / monthlyGoal * 100;
-                }
-
-                System.out.printf("%-15s %-15s %-15s %-15s %-15.2f%n",
-                        Name, currentMonth, monthlyGoal, remaining, progress);
-            }
-
+            
+            request.setAttribute("budgetTrackerIncome", budgetTracker);
+            
         } catch (DataAccessException e) {
             logger.error("Database access error: {}", e.getMessage());
         } catch (Exception e) {
@@ -205,88 +195,72 @@ public class BudgetTrackerService {
         }
     }
 
-    public void budgetOverview() {
-        try {
-            List<BudgetTracker> budgets = budgetTrackerDAO.getAllBudgets();
-            List<Expense> expenses = expenseDAO.getAllExpense();
-            List<IncomeExpenseSources> incomeExpenseSources = incomeExpenseSourcesDAO.getAllIncomeExpenseSource();
+    public void budgetOverview(HttpServletRequest request, HttpServletResponse response) {
+    	
+    	 try {
+             List<BudgetTracker> budgets = budgetTrackerDAO.getAllBudgets();
+             List<Expense> expenses = expenseDAO.getAllExpense();
+             List<IncomeExpenseSources> incomeExpenseSources = incomeExpenseSourcesDAO.getAllIncomeExpenseSource();
 
-            Double totalIncome = incomeDAO.getIncomes();
-            if (totalIncome == null) {
-                throw new DataAccessException("Total income is null.");
-            }
+             Double totalIncome = incomeDAO.getIncomes();
+             if (totalIncome == null) {
+                 throw new DataAccessException("Total income is null.");
+             }
 
-            System.out.printf("%-17s %-20s %-15s %-15s %-15s%n", "Name", "Budget Percentage ", "Monthly Budget",
-                    "Current Month", "Remaining");
-            System.out.println(
-                    "---------------------------------------------------------------------------------------------------");
+             List<Map<String, Object>> budgetData = new ArrayList<>();
+             for (BudgetTracker budget : budgets) {
+                 Map<String, Object> budgetMap = new HashMap<>();
+                 budgetMap.put("name", budget.getName());
+                 budgetMap.put("budgetPercentage", budget.getBudgetPercentage());
 
-            for (BudgetTracker budget : budgets) {
-                String name = budget.getName();
-                Double budgetPer = budget.getBudgetPercentage();
+                 Double allocatedAmount = (totalIncome * budget.getBudgetPercentage()) / 100;
+                 budgetMap.put("allocatedAmount", allocatedAmount);
 
-                Double allocatedAmount = 0.0;
-                if (totalIncome != null && budgetPer != null) {
-                    allocatedAmount = (totalIncome * budgetPer) / 100;
-                }
+                 Double currentExpense = 0.0;
+                 for (IncomeExpenseSources sources : incomeExpenseSources) {
+                     if (sources.getBudgetTracker() != null &&
+                             sources.getBudgetTracker().getBudgetTrackerId().equals(budget.getBudgetTrackerId())) {
+                         for (Expense expense : expenses) {
+                             if (expense.getExpenseSourceId().getIncomeExpenseSourceId()
+                                     .equals(sources.getIncomeExpenseSourceId())) {
+                                 currentExpense += expense.getExpense();
+                             }
+                         }
+                     }
+                 }
 
-                Double currentExpense = 0.0;
-                for (IncomeExpenseSources sources : incomeExpenseSources) {
-                    if (sources.getBudgetTracker() != null
-                            && sources.getBudgetTracker().getBudgetTrackerId().equals(budget.getBudgetTrackerId())) {
-                        for (Expense expense : expenses) {
-                            if (expense.getExpenseSourceId().getIncomeExpenseSourceId()
-                                    .equals(sources.getIncomeExpenseSourceId())) {
-                                currentExpense += expense.getExpense();
-                            }
-                        }
-                    }
-                }
+                 Double remaining = allocatedAmount + currentExpense;
+                 
+                 if(currentExpense < 0 ) {
+                	 currentExpense = Math.abs(currentExpense);
+                 }
+                 
+                 budgetMap.put("currentExpense", currentExpense);
+                 budgetMap.put("remaining", remaining);
 
-                Double remaining = allocatedAmount + currentExpense;
-                System.out.printf("%-17s %-20.2f %-15.2f %-15s %-15.2f%n", name, budgetPer, allocatedAmount,
-                        Math.abs(currentExpense),
-                        remaining);
-            }
+                 budgetData.add(budgetMap);
+             }
 
-        } catch (DataAccessException e) {
-            logger.error("Database access error: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("An error occurred while fetching bank transactions.");
-            e.printStackTrace();
-        }
+             request.setAttribute("budgetData", budgetData);
+             
+         } catch (DataAccessException e) {
+             request.setAttribute("errorMessage", "Database access error: " + e.getMessage());
+//             request.getRequestDispatcher("/error.jsp").forward(request, response);
+         } catch (Exception e) {
+             request.setAttribute("errorMessage", "An error occurred while fetching budget data.");
+//             request.getRequestDispatcher("/error.jsp").forward(request, response);
+         }  	 
     }
 
-    public void expenseOverviewDisplay() {
+    public void expenseOverviewDisplay(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<Object[]> budgetTracker = budgetTrackerDAO.displayExpense();
             if (budgetTracker == null || budgetTracker.isEmpty()) {
                 throw new DataAccessException("NO Expense Found!");
             }
-
-            System.out.println("\nExpense Overview ");
-            System.out.printf("%-15s %-15s %-15s %-15s %-15s %-15s%n",
-                    "Name", "Current Month", "Monthly Budget", "Remaining", "Progress", "Budget Tracker");
-            System.out.println(
-                    "-----------------------------------------------------------------------------------------------");
-            for (Object[] record : budgetTracker) {
-                String Name = (String) record[0];
-                Double currentMonth = (Double) record[1];
-                Double monthlyBudget = (Double) record[2];
-                String budgetName = (String) record[3];
-
-                Double remaining = 0.0;
-                Double progress = 0.0;
-                if (incomeExpenseSources.getMonthlyBudget() != null && currentMonth != null
-                        || monthlyBudget != null) {
-                    remaining = monthlyBudget + currentMonth;
-                    progress = (Math.abs(currentMonth) / monthlyBudget) * 100;
-                }
-
-                System.out.printf("%-15s %-15s %-15s %-15s %-15.2f %-15s%n",
-                        Name, Math.abs(currentMonth), monthlyBudget, remaining, progress, budgetName);
-            }
-
+            
+            request.setAttribute("budgetTrackerExpense", budgetTracker);
+            
         } catch (DataAccessException e) {
             logger.error("Database access error: {}", e.getMessage());
         } catch (Exception e) {

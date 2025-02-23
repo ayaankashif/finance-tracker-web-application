@@ -3,6 +3,7 @@ package com.ayaan.FinanceTracker.service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -21,6 +22,7 @@ import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.AccountTransactionDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.exceptionHandling.ExceedsPercentageException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
 import com.ayaan.FinanceTracker.models.Income;
@@ -75,14 +77,27 @@ public class IncomeServlet extends HttpServlet {
 		String income = request.getParameter("income");
 		String incomeSources = request.getParameter("incomeSource");
 		
-		boolean isSaved = incomeService.addIncome(name, bankAccount, income, incomeSources);
-		
-		if (isSaved) {
-			response.getWriter().append("Income Added Successfully.");
-		} else {
-			response.getWriter().append("Faiiled to add Income.");
+		try {
+			incomeService.addIncome(name, bankAccount, income, incomeSources);
+			response.getWriter().append("Income Added Successfully");
+
+		} catch (SQLException e) {
+			response.getWriter().append("Failed to Proceed");
+		} catch(DataAccessException e) {
+			response.getWriter().append("Unexpected Error Occured");	
+			response.getWriter().append(e.getMessage());
+		} catch (Exception e) {
+			response.getWriter().append("An Error Occured");
+			e.printStackTrace();
 		}
 	}
+		
+//		if (isSaved) {
+//			response.getWriter().append("Income Added Successfully.");
+//		} else {
+//			response.getWriter().append("Faiiled to add Income.");
+//		}
+//	}
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

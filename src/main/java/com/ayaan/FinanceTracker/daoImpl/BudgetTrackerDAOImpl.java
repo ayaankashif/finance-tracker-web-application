@@ -19,7 +19,7 @@ public class BudgetTrackerDAOImpl implements BudgetTrackerDAO {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Serializable id = (Serializable) session.save(expense);
+            Serializable id = (Serializable) session.save(budgetTracker);
             transaction.commit();
             if(id != null) {
             	return true;
@@ -116,4 +116,5 @@ public class BudgetTrackerDAOImpl implements BudgetTrackerDAO {
             return session.createQuery("FROM BudgetTracker", BudgetTracker.class).list();
         }
     }
+    
 }

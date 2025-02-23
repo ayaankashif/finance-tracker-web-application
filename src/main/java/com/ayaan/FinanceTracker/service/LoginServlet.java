@@ -33,7 +33,10 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+//		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
+		request.getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+		
 	}
 
 	/**
@@ -49,10 +52,10 @@ public class LoginServlet extends HttpServlet {
 			//setting cookie to expiry in 30 mins
 			loginCookie.setMaxAge(30*60);
 			response.addCookie(loginCookie);
-			response.sendRedirect("Index.jsp");
+			response.sendRedirect("DashboardServlet");
 		
 		}else {
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/Login.jsp");
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp");
 			PrintWriter out= response.getWriter();
 			out.println("<font color=red>Either user name or password is wrong.</font>");
 			rd.include(request, response);

@@ -3,6 +3,7 @@ package com.ayaan.FinanceTracker.service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -35,7 +36,7 @@ public class ExpenseService {
     AccountTransaction accountTransaction = new AccountTransaction();
     BudgetTrackerDAOImpl budgetTrackerDAO = new BudgetTrackerDAOImpl();
 
-    public boolean addExpense(String name, String bankAccountName, String expense, String expenseSource) throws DataAccessException  {
+    public boolean addExpense(String name, String bankAccountName, String expense, String expenseSource) throws DataAccessException, SQLException  {
        
         	double expenseValue = Double.parseDouble(expense);
         	
@@ -65,7 +66,6 @@ public class ExpenseService {
             expenseDAO.saveExpense(expense1);
             logger.info("\nExpense added successfully");
 
-        
         return false;
     }
 
@@ -137,22 +137,14 @@ public class ExpenseService {
         }
     }
 
-    public boolean addExpenseSource(String expenseSource, String budget) {
-        try {
+    public boolean addExpenseSource(String expenseSource, String budget) throws DataAccessException, SQLException{
             BudgetTracker budgetTracker = null;
                 budgetTracker = budgetTrackerDAO.getBudgetByCondition(budget);
                 if (budgetTracker == null) {
                     throw new DataAccessException("Error, no budget found ");
-            }
-
+                }
             incomeExpenseSourcesImpl.addIncomeExpenseSource(expenseSource, 'E', budgetTracker);
 
-        } catch (DataAccessException e) {
-            logger.error("Database error while fetching income sources: {}", e.getMessage());
-        } catch (Exception e) {
-            System.out.println("\nError: Invalid input");
-            e.printStackTrace();
-        }
         return false;
     }
 

@@ -2,11 +2,18 @@ package com.ayaan.FinanceTracker.service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.exceptionHandling.ExceedsPercentageException;
+import com.ayaan.FinanceTracker.models.BudgetTracker;
+import com.ayaan.FinanceTracker.models.Expense;
+import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
 
 /**
  * Servlet implementation class BudgetTrackerServlet
@@ -32,6 +39,7 @@ public class BudgetTrackerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
 	}
 
 	/**
@@ -40,7 +48,7 @@ public class BudgetTrackerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		String budget = request.getParameter("budget");
 		String budgetPer = request.getParameter("budgetPer");
 
@@ -50,8 +58,11 @@ public class BudgetTrackerServlet extends HttpServlet {
 
 		} catch (SQLException e) {
 			response.getWriter().append("Failed to Proceed");
-		} catch (Exception e) {
+		} catch (ExceedsPercentageException e) {
 			response.getWriter().append("Unexpected Error Occured");
+			response.getWriter().append(e.getMessage());
+		} catch (Exception e) {
+			response.getWriter().append("An Error Occured");
 			e.printStackTrace();
 		}
 	}

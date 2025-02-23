@@ -82,7 +82,7 @@
   </servlet-mapping> 
   
  <welcome-file-list>
- 	<welcome-file>Index.jsp</welcome-file>
+ 	<welcome-file>index.jsp</welcome-file>
  	<welcome-file>Dashboard.jsp</welcome-file>
  	<welcome-file>BankAccount.jsp</welcome-file>
  	<welcome-file>IncomeExpenseSources.jsp</welcome-file>

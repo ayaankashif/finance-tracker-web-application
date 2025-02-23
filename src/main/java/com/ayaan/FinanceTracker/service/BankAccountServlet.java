@@ -33,12 +33,10 @@ public class BankAccountServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		RequestDispatcher dispatcher = request.getRequestDispatcher("BankAccount.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/BankAccount.jsp");
 		dispatcher.forward(request, response);
 		
 		response.getWriter().append("Bank Servlet get is calling ");
-		
-		
 	}
 
 	/**

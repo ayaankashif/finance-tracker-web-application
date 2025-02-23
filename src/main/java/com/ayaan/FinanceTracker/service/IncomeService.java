@@ -3,6 +3,7 @@ package com.ayaan.FinanceTracker.service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -35,8 +36,7 @@ public class IncomeService {
 	AccountTransaction accountTransaction = new AccountTransaction();
 	IncomeExpenseSources incomeExpenseSources = new IncomeExpenseSources();
 
-	public boolean addIncome(String name, String bankAccountName, String income, String incomeSources) {
-		try {
+	public boolean addIncome(String name, String bankAccountName, String income, String incomeSources) throws SQLException, DataAccessException {
 
 			BankAccount bankAccount = null;
 			bankAccount = bankAccountDAO.getBankAccountByCondition(bankAccountName);
@@ -59,16 +59,6 @@ public class IncomeService {
 			accountTransactionImpl.addTransaction(bankAccount, "Credit", Double.parseDouble(income));
 
 			return incomeDAO.saveIncome(income1);
-
-		} catch (IllegalArgumentException e) {
-			logger.error("Invalid income value: {}", e.getMessage());
-		} catch (DataAccessException e) {
-			logger.error("Database access error: {}", e.getMessage());
-		} catch (Exception e) {
-			logger.error("An unexpected error occurred: {}", e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	public void updateIncome(String name, String bankAccountName, String Income, String incomeSource) {
@@ -135,17 +125,8 @@ public class IncomeService {
 		}
 	}
 
-	public boolean addIncomeSource(String incomeSource) {
-		try {
+	public boolean addIncomeSource(String incomeSource) throws SQLException{
 			incomeExpenseSourcesImpl.addIncomeExpenseSource(incomeSource, 'I', null);
-			logger.info("Income Source Added");
-
-		} catch (IllegalArgumentException e) {
-			logger.error("Invalid income source: {}", e.getMessage());
-		} catch (Exception e) {
-			logger.error("An unexpected error occurred: {}", e.getMessage());
-			e.printStackTrace();
-		}
 		return false;
 	}
 	

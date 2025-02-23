@@ -1,0 +1,29 @@
+[33mcommit 04559c184e941457bbdb04d402e4c8548994be59[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Ayaan Kashif <ayaankashif060@gmail.com>
+Date:   Wed Feb 12 21:54:02 2025 +0500
+
+    altered business logic of all models, added jsp pages named as bankAccount.jsp, BudgetTracker.jsp, Income.jsp, Expense.jsp, Login.jsp and servlets of these as well
+
+[33mcommit 288937c4d79a343ad68cf0e696ec1f4ce398b3ce[m
+Author: Ayaan Kashif <ayaankashif060@gmail.com>
+Date:   Thu Jan 23 23:42:24 2025 +0500
+
+    added .settings folder
+
+[33mcommit 0fb70296d7769f3b6bf640fa8130b6ce12c00132[m
+Author: Ayaan Kashif <ayaankashif060@gmail.com>
+Date:   Thu Jan 23 22:09:15 2025 +0500
+
+    updated files
+
+[33mcommit 7e5b0e8cc4b3a0feba0d176b89402a0ce99dac7b[m
+Author: Ayaan Kashif <ayaankashif060@gmail.com>
+Date:   Wed Jan 22 22:10:21 2025 +0500
+
+    added .gitignore file
+
+[33mcommit a4ac14d98f14a9369c70f2170ed19d4bbec74713[m
+Author: Ayaan Kashif <ayaankashif060@gmail.com>
+Date:   Wed Jan 22 21:31:54 2025 +0500
+
+    initial commit

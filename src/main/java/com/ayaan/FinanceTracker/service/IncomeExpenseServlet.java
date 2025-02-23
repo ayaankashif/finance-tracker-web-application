@@ -1,10 +1,14 @@
 package com.ayaan.FinanceTracker.service;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 
 /**
  * Servlet implementation class IncomeExpenseServlet
@@ -15,7 +19,7 @@ public class IncomeExpenseServlet extends HttpServlet {
 	IncomeService incomeService = new IncomeService();
 	ExpenseService expenseService = new ExpenseService();
 	IncomeExpenseSourcesService incomeExpenseSources = new IncomeExpenseSourcesService();
-          /**
+     /**
      * @see HttpServlet#HttpServlet()
      */
     public IncomeExpenseServlet() {
@@ -41,20 +45,19 @@ public class IncomeExpenseServlet extends HttpServlet {
 		String expenseSource = request.getParameter("expenseSrc");
 		String budgetTracker = request.getParameter("budgetTracker");
 		
-		boolean isSaved = incomeService.addIncomeSource(incomeSource);
-		boolean isSavedExp = expenseService.addExpenseSource(expenseSource, budgetTracker);
-		
-		if(isSaved) {
-			response.getWriter().append("Income Source Added Successfully.");
-		} else if(isSavedExp) {
-			response.getWriter().append("Expense Source Added Successfully.");
-		} else {
-			response.getWriter().append("Failed to Add Source.");
-		}
-		
-		
-		response.getWriter().append("DoPOST is calling " + incomeSource + " " + expenseSource);
-				
-	}
+		try {
+			incomeService.addIncomeSource(incomeSource);
+			expenseService.addExpenseSource(expenseSource, budgetTracker);
+			response.getWriter().append("Source Added Successfully");
 
+		} catch (DataAccessException e) {
+			response.getWriter().append("Unexpected Error Occured");
+			response.getWriter().append(e.getMessage());
+		} catch (SQLException e) {
+			response.getWriter().append("Failed to Proceed");
+		} catch (Exception e) {
+			response.getWriter().append("\nError: Invalid input");
+			e.printStackTrace();
+		}	
+	}
 }

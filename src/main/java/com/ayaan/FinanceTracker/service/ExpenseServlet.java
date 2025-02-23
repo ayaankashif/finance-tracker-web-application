@@ -20,7 +20,6 @@ import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 public class ExpenseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	ExpenseService expenseService = new ExpenseService();
-	private static final Logger logger = LoggerFactory.getLogger(ExpenseService.class);
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -59,6 +58,9 @@ public class ExpenseServlet extends HttpServlet {
 
 		} catch (DataAccessException e) {
 			response.getWriter().append("Database error while fetching income sources");
+			response.getWriter().append(e.getMessage());
+		} catch (SQLException e) {
+			response.getWriter().append("Failed to Proceed");
 		} catch (Exception e) {
 			response.getWriter().append("\nError: Invalid input");
 			e.printStackTrace();
