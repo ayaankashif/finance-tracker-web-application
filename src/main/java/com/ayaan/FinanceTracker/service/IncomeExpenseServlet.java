@@ -32,8 +32,8 @@ public class IncomeExpenseServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		incomeExpenseSources.listSources(response);
-		
+		incomeExpenseSources.listSources(response, request);
+		request.getRequestDispatcher("IncExpSource.jsp").forward(request, response);
 	}
 
 	/**

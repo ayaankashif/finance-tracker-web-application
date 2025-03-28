@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -15,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import com.ayaan.FinanceTracker.dao.IncomeDAO;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
+import com.ayaan.FinanceTracker.dao.BankAccountDAO;
 import com.ayaan.FinanceTracker.daoImpl.IncomeDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
+import com.ayaan.FinanceTracker.dao.IncomeExpenseSourcesDAO;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.exceptionHandling.InvalidIDException;
 import com.ayaan.FinanceTracker.exceptionHandling.invalidInputException;
@@ -29,10 +32,10 @@ public class IncomeService {
 	private static final Logger logger = LoggerFactory.getLogger(IncomeService.class);
 
 	IncomeDAO incomeDAO = new IncomeDAOImpl();
-	BankAccountDAOImpl bankAccountDAO = new BankAccountDAOImpl();
+	BankAccountDAO bankAccountDAO = new BankAccountDAOImpl();
 	AccountTransactionService accountTransactionImpl = new AccountTransactionService();
 	IncomeExpenseSourcesService incomeExpenseSourcesImpl = new IncomeExpenseSourcesService();
-	IncomeExpenseSourcesDAOImpl incomeExpenseSourcesDAO = new IncomeExpenseSourcesDAOImpl();
+	IncomeExpenseSourcesDAO incomeExpenseSourcesDAO = new IncomeExpenseSourcesDAOImpl();
 	AccountTransaction accountTransaction = new AccountTransaction();
 	IncomeExpenseSources incomeExpenseSources = new IncomeExpenseSources();
 
@@ -131,42 +134,26 @@ public class IncomeService {
 	}
 	
 
-	public void listIncome(HttpServletResponse response) throws IOException {
-    	
-    	response.setContentType("text/html");
-    	PrintWriter out = response.getWriter();
-   		try {
-   			List<Income> incomes = incomeDAO.getAllIncome();
-   			if (incomes == null) {
-   				throw new DataAccessException("NO Incomes Found");
-   			}
+	public void listIncome(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		    try {
+		        List<Income> incomes = incomeDAO.getAllIncome();
+		        if (incomes == null || incomes.isEmpty()) {
+		            throw new DataAccessException("No Incomes Found");
+		        }
 
-    		out.println("<html><head><title>Income List</title></head><body>");
-    		out.println("<html><head><link href = \"Style.css\" rel = \"stylesheet\"></head><body>");
-    		out.println("<h1>Incomes List:</h1>");
-    		out.println("<table border='1'>");
-    		out.println("<tr><th>Income ID</th><th>Name</th><th>Income Source</th><th>Income</th></tr>");
+		        // Calculate total income
+		        double totalIncome = incomes.stream().mapToDouble(Income::getIncome).sum();
 
-    		for (Income income : incomes) {
-    			out.println("<tr>");
-    			out.println("<td>" + income.getIncomeId() + "</td>");
-    			out.println("<td>" + income.getName() + "</td>");
-    			out.println("<td>" + income.getIncomeSources().getIncomeExpenseSource() + "</td>");
-    			out.println("<td>" + income.getIncome() + "</td>");
-    			out.println("</tr>");
-    		}
-    			out.println("</table>");
-    			out.println("</body></html>");
-
-    		} catch( DataAccessException e) {
-    				out.println("<h1>Error: " + e.getMessage() + "</h1>");
-    				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    		} catch( Exception e) {
-    			out.println("<h1>An unexpected error occurred.</h1>");
-    			e.printStackTrace(out);
-    			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    		} finally {
-    			out.close();
-    		}
-	}
+		        // Set attributes for JSP
+		        request.setAttribute("income", incomes);
+		        request.setAttribute("totalIncome", totalIncome);
+		        
+		    } catch (DataAccessException e) {
+		        request.setAttribute("errorMessage", e.getMessage());
+//		        request.getRequestDispatcher("error.jsp").forward(request, response);
+		    } catch (Exception e) {
+		        request.setAttribute("errorMessage", "An unexpected error occurred.");
+//		        request.getRequestDispatcher("error.jsp").forward(request, response);
+		    }
+		}
 }

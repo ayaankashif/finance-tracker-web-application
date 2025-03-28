@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -46,37 +47,21 @@ public class IncomeExpenseSourcesService {
         }
     }
 
-    public void listSources(HttpServletResponse response) throws IOException {
-    	
-    	response.setContentType("text/html");
-    	PrintWriter out = response.getWriter();
+    public void listSources(HttpServletResponse response, HttpServletRequest request) throws IOException {
         try {
             List<IncomeExpenseSources> sources = incomeExpenseSourcesDAO.getAllIncomeExpenseSource();
             if (sources == null) {
                 throw new DataAccessException("No Sources found");
             }
             
-            out.println("<html><head><title>Income Sources List</title></head><body>");
-    		out.println("<html><head><link href = \"Style.css\" rel = \"stylesheet\"></head><body>");
-    		out.println("<h1>Incomes List:</h1>");
-    		out.println("<table border='1'>");
-    		out.println("<tr><th>Sources</th></tr>");
-    		
-    		for (IncomeExpenseSources incExpSrc : sources) {
-    			out.println("<tr>");
-    			out.println("<td>" + incExpSrc.getIncomeExpenseSource() + "</td>");
-    			out.println("</tr>");
-    		}
-    			out.println("</table>");
-    			out.println("</body></html>");
-
+            request.setAttribute("sources", sources);
+           	
         } catch(DataAccessException e){  
             logger.error("Database error while fetching income sources: {}", e.getMessage());
         } catch (Exception e) {
             logger.info("An unexpected error occurred.");
             e.printStackTrace();
-        } finally {
-			out.close();
-		}
     }
+}
+
 }

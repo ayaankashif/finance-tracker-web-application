@@ -18,4 +18,6 @@ public interface ExpenseDAO {
     
     Double getExpenseBySourceFromExpense(String source);
     
+    Double getTotalExpense();
+    
 }

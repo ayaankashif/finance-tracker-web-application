@@ -20,6 +20,7 @@ import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 public class ExpenseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	ExpenseService expenseService = new ExpenseService();
+	IncomeExpenseSourcesService incomeExpenseSources = new IncomeExpenseSourcesService();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -37,7 +38,9 @@ public class ExpenseServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		expenseService.listExpense(response);
+		expenseService.listExpense(response, request);
+		incomeExpenseSources.listSources(response, request);
+		request.getRequestDispatcher("Exp.jsp").forward(request, response);
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class ExpenseServlet extends HttpServlet {
 		String bankAccount = request.getParameter("bankAccount");
 		String expense = request.getParameter("expense");
 		String expenseSource = request.getParameter("expenseSource");
-
+		
 		try {
 			expenseService.addExpense(name, bankAccount, expense, expenseSource);
 			response.getWriter().append("Expense Added Successfully");

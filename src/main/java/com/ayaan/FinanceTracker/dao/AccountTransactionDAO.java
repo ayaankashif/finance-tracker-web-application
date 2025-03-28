@@ -21,4 +21,6 @@ public interface AccountTransactionDAO {
     List<Object[]> monthlyStats(String type);
     
     List<AccountTransaction> getAllTransactions();
+    
+    Double getTotalBankBalance();
 }

@@ -1,10 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%-- <%@ page isELIgnored="false" %> --%>
-
-
-
+<%@ page isELIgnored="false" %>
+	
+	
 <%
 System.out.println("HI from JAVA");
 %>
@@ -328,8 +327,6 @@ System.out.println("HI from JAVA");
 </body>
 </html> --%>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -337,15 +334,41 @@ System.out.println("HI from JAVA");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Tracker</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
 </head>
 <body class="dark">
+	<%-- <%
+	String userName = null;
+	Cookie[] cookies = request.getCookies();
+	if (cookies != null) {
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("user"))
+		userName = cookie.getValue();
+		}
+	}
+	if (userName == null)
+		response.sendRedirect("LoginServlet");
+	%> --%>
+    <div class="burger-menu-overlay"></div>
+    <div class="burger-menu">
+        <div class="burger-menu-header">
+            <h2>Menu</h2>
+            <span class="material-icons burger-toggle">close</span>
+        </div>
+        <div class="burger-menu-content">
+            <div class="burger-menu-item" data-target="signup">Sign Up</div>
+            <a href = "loginServlet">   </a>
+            <div class="burger-menu-item" data-target="signin">Sign In</div>
+            <div class="burger-menu-item" data-target="dashboard">Budget Tracker Dashboard</div>
+        </div>
+    </div>
+
     <div class="container">
         <header class="header">
+            <span class="material-icons burger-toggle">menu</span>
             <h1>Budget Tracker</h1>
         </header>
-
+        
         <div class="tabs">
             <div class="tabs-list">
                 <button class="tab-trigger active" data-tab="overview">Overview</button>
@@ -361,7 +384,7 @@ System.out.println("HI from JAVA");
                             <span class="material-icons">attach_money</span>
                         </div>
                         <div class="card-content">
-                            <div class="amount">$1,234.56</div>
+                            <div class="amount">$<%= request.getAttribute("totalIncome") %> </div>
                         </div>
                     </div>
 
@@ -371,7 +394,7 @@ System.out.println("HI from JAVA");
                             <span class="material-icons">pie_chart</span>
                         </div>
                         <div class="card-content">
-                            <div class="amount">$4,500.00</div>
+                            <div class="amount">$<%= request.getAttribute("totalIncome") %></div>
                         </div>
                     </div>
 
@@ -408,50 +431,115 @@ System.out.println("HI from JAVA");
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Recent Transactions</h3>
-                    </div>
-                    <div class="card-content">
+            <div class="card">
+            <div class="card-header">
+                <h3>Financial Overview</h3>
+            </div>
+            <div class="card-content">
+                <div class="table-container">
+                    <div class="table-wrapper" id="budget-overview">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Type</th>
+                                    <th>Name</th>
+									<th>Budget</th>
+									<th>Monthly Budget</th>
+									<th>Current Month</th>
+									<th>Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               	<c:forEach var="budget" items="${budgetData}">
+								<tr>
+										<td>${budget.name}</td>
+                						<td>${budget.budgetPercentage} %</td>
+                						<td>${budget.allocatedAmount}</td>
+                						<td>${budget.currentExpense}</td>
+                						<td>${budget.remaining}</td>
+								
+									</tr>
+								</c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-wrapper" id="expense-overview">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+									<th>Current Month</th>
+									<th>Monthly Goal</th>
+									<th>Remaining</th>
+									<th>Progress</th>
+									<th>Budget Tracker</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="record" items="${budgetTrackerExpense}">
+                			<c:set var="name" value="${record[0]}" />
+                			<c:set var="currentMonth" value="${record[1]}" />
+                			<c:set var="monthlyBudget" value="${record[2]}" />
+                			<c:set var="budgetName" value="${record[3]}" />
+                			
+                			<c:set var="absoluteCurrentMonth" value="${currentMonth * -1}" />
+                
+                			<c:set var="remaining" value="${monthlyBudget + absolutecurrentMonth}" />
+                			<c:set var="progress" value="${((absoluteCurrentMonth)/ monthlyBudget) * 100}" />
+
+                			<tr>
+                    			<td>${name}</td>
+                    			<td>${absoluteCurrentMonth}</td>
+                    			<td>${monthlyBudget}</td>
+                    			<td>${remaining}</td>
+                    			<td>${progress}%</td>
+                    			<td>${budgetName}</td>
+               				</tr>
+           			 	</c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-wrapper" id="income-overview">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Current Month</th>
+                                    <th>Monthly Goal</th>
+                                    <th>Remaining</th>
+                                    <th>Progress</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>2025-02-23</td>
-                                    <td>Salary</td>
-                                    <td>$3,000.00</td>
-                                    <td>Income</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-22</td>
-                                    <td>Groceries</td>
-                                    <td>$150.00</td>
-                                    <td>Expense</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-21</td>
-                                    <td>Freelance Work</td>
-                                    <td>$500.00</td>
-                                    <td>Income</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-20</td>
-                                    <td>Utilities</td>
-                                    <td>$200.00</td>
-                                    <td>Expense</td>
+                                     <c:forEach var="record" items="${budgetTrackerIncome}">
+                						<c:set var="name" value="${record[0]}" />
+                						<c:set var="currentMonth" value="${record[1]}" />
+                						<c:set var="monthlyGoal" value="${record[2]}" />
+                
+                						<c:set var="remaining" value="${monthlyGoal - currentMonth}" />
+                						<c:set var="progress" value="${(currentMonth / monthlyGoal) * 100}" />
+					
+					 					<tr>
+                    						<td>${name}</td>
+                    						<td>${currentMonth}</td>
+                    						<td>${monthlyGoal}</td>
+                    						<td>${remaining}</td>
+                    						<td>${progress}%</td>
+                						</tr>
+           	 						</c:forEach>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+                <div class="table-nav">
+                    <button class="table-nav-item active" data-target="budget-overview">Budget Overview</button>
+                    <button class="table-nav-item" data-target="expense-overview">Expense Overview</button>
+                    <button class="table-nav-item" data-target="income-overview">Income Overview</button>
+                </div>
             </div>
+        </div>            
+     </div>
 
             <div class="tab-content" id="income">
                 <div class="tab-header">
@@ -466,27 +554,23 @@ System.out.println("HI from JAVA");
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Source</th>
-                                    <th>Amount</th>
+                                    <th>Income ID</th>
+                                    <th>Name</th>
+                                    <th>Income Source</th>
+                                    <th>Income</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>2025-02-23</td>
-                                    <td>Salary</td>
-                                    <td>$3,000.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-21</td>
-                                    <td>Freelance Work</td>
-                                    <td>$500.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-15</td>
-                                    <td>Investment Dividends</td>
-                                    <td>$200.00</td>
-                                </tr>
+                            
+                             <c:forEach var="income" items="${incomes}">
+        						<tr>
+            						<td>${income.incomeId}</td>
+            						<td>${income.name}</td>
+            						<td>${income.incomeSources.incomeExpenseSource}</td>
+            						<td>${income.income}</td>
+        						</tr>
+    						</c:forEach>
+            					
                             </tbody>
                         </table>
                     </div>
@@ -506,27 +590,21 @@ System.out.println("HI from JAVA");
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Category</th>
-                                    <th>Amount</th>
+                                    <th>Expense ID</th>
+                                    <th>Name</th>
+                                    <th>Expense</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>2025-02-22</td>
-                                    <td>Groceries</td>
-                                    <td>$150.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-20</td>
-                                    <td>Utilities</td>
-                                    <td>$200.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2025-02-18</td>
-                                    <td>Transportation</td>
-                                    <td>$50.00</td>
-                                </tr>
+                            
+                                <c:forEach var="expense" items="${expenses}">
+        						<tr>
+            						<td>${expense.expenseId}</td>
+            						<td>${expense.name}</td>
+           							<td>${expense.expense}</td> 
+        						</tr>
+    						</c:forEach>
+    						
                             </tbody>
                         </table>
                     </div>
@@ -684,6 +762,60 @@ System.out.println("HI from JAVA");
 
         document.getElementById('add-expense-btn').addEventListener('click', () => {
             alert('Add Expense functionality to be implemented');
+        });
+        
+        // Burger menu functionality
+        function initializeBurgerMenu() {
+            const burgerToggles = document.querySelectorAll('.burger-toggle');
+            const burgerMenu = document.querySelector('.burger-menu');
+            const burgerMenuOverlay = document.querySelector('.burger-menu-overlay');
+            const burgerMenuItems = document.querySelectorAll('.burger-menu-item');
+
+            burgerToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    burgerMenu.classList.toggle('open');
+                    burgerMenuOverlay.classList.toggle('open');
+                });
+            });
+
+            burgerMenuOverlay.addEventListener('click', () => {
+                burgerMenu.classList.remove('open');
+                burgerMenuOverlay.classList.remove('open');
+            });
+
+            burgerMenuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const target = item.dataset.target;
+                    alert(`Navigating to ${target}`);
+                    burgerMenu.classList.remove('open');
+                    burgerMenuOverlay.classList.remove('open');
+                });
+            });
+        }
+
+        // Table navigation functionality
+        function initializeTableNavigation() {
+            const tableNavItems = document.querySelectorAll('.table-nav-item');
+            const tableWrappers = document.querySelectorAll('.table-wrapper');
+
+            tableNavItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    tableNavItems.forEach(navItem => navItem.classList.remove('active'));
+                    item.classList.add('active');
+
+                    const targetId = item.dataset.target;
+                    const targetTable = document.getElementById(targetId);
+                    targetTable.scrollIntoView({ behavior: 'smooth', inline: 'start' });
+                });
+            });
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTabs();
+            renderExpenses();
+            initializeBurgerMenu();
+            initializeTableNavigation();
         });
        
     </script>

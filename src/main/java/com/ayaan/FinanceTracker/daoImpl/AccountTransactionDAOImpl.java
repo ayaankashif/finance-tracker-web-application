@@ -12,6 +12,7 @@ import com.ayaan.FinanceTracker.dao.AccountTransactionDAO;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.util.HibernateUtil;
 
+
 public class AccountTransactionDAOImpl implements AccountTransactionDAO {
 
     public void saveTransaction(AccountTransaction accountTransaction) {
@@ -131,4 +132,39 @@ public class AccountTransactionDAOImpl implements AccountTransactionDAO {
                     .list();
         }
     }
-}
+
+	@Override
+	public Double getTotalBankBalance() {
+		 try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			 
+			 YearMonth currentMonth = YearMonth.now();
+	         LocalDate startDate = currentMonth.atDay(1);
+	         LocalDate endDate = currentMonth.atEndOfMonth();
+			 
+		String hql = "SELECT SUM(at.transactionAmt) " +
+	             "FROM AccountTransaction at " +
+	             "WHERE at.transactionDate BETWEEN :startDate AND :endDate";
+		
+		return session.createQuery(hql, Double.class)
+				.setParameter("startDate", Date.valueOf(startDate))
+				.setParameter("endDate", Date.valueOf(endDate))
+				.uniqueResult();
+		 }
+		}
+	}
+		/*
+		 * Query query = session.createQuery(hql);
+		 * query.setParameter("startDate","2025-02-01"); query.setParameter("endDate",
+		 * "2025-02-28");
+		 */
+		
+		
+//		Long totalBalance = (Long) query.uniqueResult();
+		/*
+		 * Query query = session.createQuery(hql); query.setParameter("startDate",
+		 * "2025-02-01"); query.setParameter("endDate", "2025-02-28");
+		 */
+
+	
+	
+

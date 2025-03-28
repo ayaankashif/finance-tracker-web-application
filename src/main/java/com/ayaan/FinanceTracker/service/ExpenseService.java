@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -57,11 +58,11 @@ public class ExpenseService {
                     throw new DataAccessException("No Expense source found.");
                 }
 
-            Expense expense1 = new Expense(name, bankAccount, Double.parseDouble(expense), incomeExpenseSources,
+            Expense expense1 = new Expense(name, bankAccount, expenseValue, incomeExpenseSources,
                     new Date(System.currentTimeMillis()));
 
-            accountTransactionImpl.addTransaction(bankAccount, "Debit", Double.parseDouble(expense));
-            accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + Double.parseDouble(expense));
+            accountTransactionImpl.addTransaction(bankAccount, "Debit", expenseValue);
+            accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + expenseValue);
 
             expenseDAO.saveExpense(expense1);
             logger.info("\nExpense added successfully");
@@ -148,31 +149,17 @@ public class ExpenseService {
         return false;
     }
 
-    public void listExpense(HttpServletResponse response) throws IOException {
+    public void listExpense(HttpServletResponse response, HttpServletRequest request) throws IOException {
         try {
-        	response.setContentType("text/html");
-        	PrintWriter out = response.getWriter();
             List<Expense> expenses = expenseDAO.getAllExpense();
             if (expenses == null) {
                 throw new DataAccessException("No Expense Found!");
             }
-
-            out.println("<html><head><title>Income List</title></head><body>");
-    		out.println("<html><head><link href = \"Style.css\" rel = \"stylesheet\"></head><body>");
-    		out.println("<h1>Incomes List:</h1>");
-    		out.println("<table border='1'>");
-    		out.println("<tr><th>Expense ID</th><th>Name</th><th>Expense Source</th><th>Expense</th></tr>");
-
-    		for (Expense expense : expenses) {
-    			out.println("<tr>");
-    			out.println("<td>" + expense.getExpenseId() + "</td>");
-    			out.println("<td>" + expense.getName() + "</td>");
-    			out.println("<td>" + expense.getExpenseSourceId().getIncomeExpenseSource()+ "</td>");
-    			out.println("<td>" + expense.getExpense() + "</td>");
-    			out.println("</tr>");
-    		}
-    			out.println("</table>");
-    			out.println("</body></html>");
+            
+            List<Expense> expense = expenses;
+            
+            request.setAttribute("expense", expense);
+            request.setAttribute("expenses", expenses);
 
         } catch (DataAccessException e) {
             logger.error("Database error while fetching income sources: {}", e.getMessage());

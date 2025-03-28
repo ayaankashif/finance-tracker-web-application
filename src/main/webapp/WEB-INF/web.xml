@@ -59,10 +59,16 @@
   	<servlet-class>com.ayaan.FinanceTracker.service.BudgetTrackerServlet</servlet-class>
   </servlet>
   <servlet>
-  	<servlet-name>LoginServlet</servlet-name>
-  	<display-name>LoginServlet</display-name>
+  	<servlet-name>SigninServlet</servlet-name>
+  	<display-name>SigninServlet</display-name>
   	<description></description>
-  	<servlet-class>com.ayaan.FinanceTracker.service.LoginServlet</servlet-class>
+  	<servlet-class>com.ayaan.FinanceTracker.service.SigninServlet</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>SignupServlet</servlet-name>
+  	<display-name>SignupServlet</display-name>
+  	<description></description>
+  	<servlet-class>com.ayaan.FinanceTracker.service.SignupServlet</servlet-class>
   </servlet>
   <servlet-mapping>
   	<servlet-name>IncomeServlet</servlet-name>
@@ -77,17 +83,21 @@
   	<url-pattern>/BudgetTrackerServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>LoginServlet</servlet-name>
-  	<url-pattern>/LoginServlet</url-pattern>
+  	<servlet-name>SigninServlet</servlet-name>
+  	<url-pattern>/SigninServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>SignupServlet</servlet-name>
+  	<url-pattern>/SignupServlet</url-pattern>
   </servlet-mapping> 
   
  <welcome-file-list>
- 	<welcome-file>index.jsp</welcome-file>
+ 	<welcome-file>dashboard.jsp</welcome-file>
  	<welcome-file>Dashboard.jsp</welcome-file>
  	<welcome-file>BankAccount.jsp</welcome-file>
  	<welcome-file>IncomeExpenseSources.jsp</welcome-file>
  	<welcome-file>Expense.jsp</welcome-file>
- 	<welcome-file>Login.jsp</welcome-file>
+ 	<welcome-file>sign-in.jsp</welcome-file>
  </welcome-file-list>
  
 </web-app> 

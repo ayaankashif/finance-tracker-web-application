@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ public class IncomeServlet extends HttpServlet {
 	IncomeService incomeService = new IncomeService();
 	IncomeExpenseSourcesDAO incomeExpenseSourcesDAO = new IncomeExpenseSourcesDAOImpl();
 	BankAccountDAO bankAccountDAO = new BankAccountDAOImpl();
+	IncomeExpenseSourcesService incomeExpenseSources = new IncomeExpenseSourcesService();
 
 	/**
 	 * Default constructor.
@@ -55,14 +57,17 @@ public class IncomeServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		incomeService.listIncome(response);
+		incomeService.listIncome(request, response);
+		incomeExpenseSources.listSources(response, request);
+		request.getRequestDispatcher("Inc.jsp").forward(request, response);
+		
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 
 //		request.dispatcher("https://www.google.com")
 
-//		RequestDispatcher dispatcher = request.getRequestDispatcher("ExpenseServlet");
+//		RequestDispatcher dispatcher = request.getRequestDispatcher("Inc.jsp");
 //		response.getWriter().append("get request");
-//		dispatcher.include(request, response);	
+//		dispatcher.forward(request, response);	
 	}
 
 	/**
@@ -80,24 +85,32 @@ public class IncomeServlet extends HttpServlet {
 		try {
 			incomeService.addIncome(name, bankAccount, income, incomeSources);
 			response.getWriter().append("Income Added Successfully");
+			request.getRequestDispatcher("index.jsp").forward(request, response);
 
 		} catch (SQLException e) {
 			response.getWriter().append("Failed to Proceed");
+			request.getRequestDispatcher("Inc.jsp").include(request, response);
 		} catch(DataAccessException e) {
 			response.getWriter().append("Unexpected Error Occured");	
 			response.getWriter().append(e.getMessage());
+			request.getRequestDispatcher("Inc.jsp").include(request, response);
+			PrintWriter out = response.getWriter();
+			out.println("<font color=red>Either user name or password is wrong.</font>");
+			
 		} catch (Exception e) {
 			response.getWriter().append("An Error Occured");
 			e.printStackTrace();
 		}
-	}
 		
-//		if (isSaved) {
-//			response.getWriter().append("Income Added Successfully.");
-//		} else {
-//			response.getWriter().append("Faiiled to add Income.");
-//		}
-//	}
+	
+		/*
+		 * }else { RequestDispatcher rd =
+		 * getServletContext().getRequestDispatcher("sign-in.jsp"); 
+		 * 
+		 * }
+		 */
+
+}
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

@@ -115,4 +115,22 @@ public class ExpenseDAOImpl implements ExpenseDAO {
             return null;
         }
     }
-}
+    
+    public Double getTotalExpense() {
+		 try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+			 
+			 YearMonth currentMonth = YearMonth.now();
+	         LocalDate startDate = currentMonth.atDay(1);
+	         LocalDate endDate = currentMonth.atEndOfMonth();
+			 
+	         String hql = "SELECT SUM(e.expense) " +
+	             "FROM Expense e " +
+	             "WHERE e.date BETWEEN :startDate AND :endDate";
+		
+	         return session.createQuery(hql, Double.class)
+				.setParameter("startDate", Date.valueOf(startDate))
+				.setParameter("endDate", Date.valueOf(endDate))
+				.uniqueResult();
+		 	}
+		}
+	}

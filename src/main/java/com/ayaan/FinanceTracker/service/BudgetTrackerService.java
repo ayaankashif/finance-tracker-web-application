@@ -206,12 +206,15 @@ public class BudgetTrackerService {
              if (totalIncome == null) {
                  throw new DataAccessException("Total income is null.");
              }
+             request.setAttribute("totalIncome", totalIncome);
 
              List<Map<String, Object>> budgetData = new ArrayList<>();
              for (BudgetTracker budget : budgets) {
                  Map<String, Object> budgetMap = new HashMap<>();
                  budgetMap.put("name", budget.getName());
                  budgetMap.put("budgetPercentage", budget.getBudgetPercentage());
+                
+                 request.setAttribute("budgetName", budgets);
 
                  Double allocatedAmount = (totalIncome * budget.getBudgetPercentage()) / 100;
                  budgetMap.put("allocatedAmount", allocatedAmount);
@@ -258,8 +261,8 @@ public class BudgetTrackerService {
             if (budgetTracker == null || budgetTracker.isEmpty()) {
                 throw new DataAccessException("NO Expense Found!");
             }
-            
             request.setAttribute("budgetTrackerExpense", budgetTracker);
+            
             
         } catch (DataAccessException e) {
             logger.error("Database access error: {}", e.getMessage());

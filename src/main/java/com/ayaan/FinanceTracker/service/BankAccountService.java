@@ -1,9 +1,14 @@
 package com.ayaan.FinanceTracker.service;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,27 +24,17 @@ public class BankAccountService {
 
     BankAccountDAOImpl bankAccountDAO = new BankAccountDAOImpl();
 
-    public void addBankAccount() {
-        try {
-            System.out.println("Bank Name: ");
-            Scanner scanner = new Scanner(System.in);
-            String name = scanner.nextLine();
-            BankAccount bankAccount = bankAccountDAO.getBankAccountByCondition(name);
+    public boolean addBankAccount(String bankName) throws BankAlreadyExistException, SQLException {
+    	
+            BankAccount bankAccount = bankAccountDAO.getBankAccountByCondition(bankName);
             if (bankAccount != null) {
                 throw new BankAlreadyExistException("Bank Account already exists");
             }
-            bankAccount = new BankAccount(name, new Date(System.currentTimeMillis()));
+            bankAccount = new BankAccount(bankName, new Date(System.currentTimeMillis()));
             bankAccountDAO.saveBankAccount(bankAccount);
             logger.info("Bank Account Added");
-
-        } catch (BankAlreadyExistException e) {
-            logger.error("Error while giving bank Account: {}", e.getMessage());
-        } catch (InputMismatchException e) {
-            logger.error("Invalid input: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("An unexpected error occurred: {}", e.getMessage());
-            e.printStackTrace();
-        }
+        
+            return false;
     }
 
     public void updateBankAccount() {
@@ -62,18 +57,24 @@ public class BankAccountService {
         }
     }
 
-    public void listBankAccount() {
+    public void listBankAccount(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<BankAccount> bank = bankAccountDAO.getAllBankAccounts();
             if (bank == null) {
                 throw new DataAccessException("No bank Account Found!");
             }
-            System.out.println("Bank Account List: ");
-            System.out.printf("%-15s %-14s %-15s%n",
-                    "Bank ID", "Bank Name", "Account Date");
-            System.out.println("----------------------------------------------");
-            bank.forEach(bankAccount -> System.out.printf("%-15s %-14s %-15s%n",
-                    bankAccount.getBankAccId(), bankAccount.getName(), bankAccount.getAccountDate()));
+            
+            request.setAttribute("bankName", bank);
+            
+			/*
+			 * System.out.println("Bank Account List: ");
+			 * System.out.printf("%-15s %-14s %-15s%n", "Bank ID", "Bank Name",
+			 * "Account Date");
+			 * System.out.println("----------------------------------------------");
+			 * bank.forEach(bankAccount -> System.out.printf("%-15s %-14s %-15s%n",
+			 * bankAccount.getBankAccId(), bankAccount.getName(),
+			 * bankAccount.getAccountDate()));
+			 */
 
         } catch (DataAccessException e) {
             logger.error("Database error while fetching income sources: {}", e.getMessage());
