@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.exceptionHandling.ExceedsPercentageException;
+import com.ayaan.FinanceTracker.exceptionHandling.MonthlyBudgetException;
+import com.ayaan.FinanceTracker.exceptionHandling.MonthlyGoalException;
 import com.ayaan.FinanceTracker.models.BudgetTracker;
 import com.ayaan.FinanceTracker.models.Expense;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
@@ -52,15 +54,38 @@ public class BudgetTrackerServlet extends HttpServlet {
 		
 		String budget = request.getParameter("budget");
 		String budgetPer = request.getParameter("budgetPer");
-
+		String incomeSource = request.getParameter("incomeSource");
+		String expenseSource = request.getParameter("expenseSource");
+		String monthlyGoal = request.getParameter("monthlyGoal");
+		String monthlyBudget = request.getParameter("monthlyBudget");
+		
 		try {
-			budgetTrackerService.setBudget(budget, budgetPer);
-			response.getWriter().append("Budget Added Successfully");
-
+			
+			if(budget != null && budgetPer != null) {
+				budgetTrackerService.setBudget(budget, budgetPer);
+			}
+			
+			if(monthlyGoal != null && incomeSource != null) {
+				budgetTrackerService.incomeOverview(incomeSource, monthlyGoal);
+				response.getWriter().append("Budget Updated Successfully");
+			}
+			
+			if(monthlyBudget != null && expenseSource != null) {
+				budgetTrackerService.expenseOverview(expenseSource, monthlyBudget);
+			}
+			
+			request.getRequestDispatcher("DashboardServlet").include(request, response);
+			
 		} catch (SQLException e) {
 			response.getWriter().append("Failed to Proceed");
 		} catch (ExceedsPercentageException e) {
-			response.getWriter().append("Unexpected Error Occured");
+			response.getWriter().append("Unexpected Error Occured ");
+			response.getWriter().append(e.getMessage());
+		} catch (MonthlyGoalException e) {
+			response.getWriter().append("Unexpected Error Occured ");
+			response.getWriter().append(e.getMessage());
+		} catch (MonthlyBudgetException e) {
+			response.getWriter().append("Unexpected Error Occured ");
 			response.getWriter().append(e.getMessage());
 		} catch (Exception e) {
 			response.getWriter().append("An Error Occured");

@@ -22,7 +22,9 @@ import com.ayaan.FinanceTracker.daoImpl.ExpenseDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.exceptionHandling.MonthlyGoalException;
 import com.ayaan.FinanceTracker.exceptionHandling.ExceedsPercentageException;
+import com.ayaan.FinanceTracker.exceptionHandling.MonthlyBudgetException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BudgetTracker;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
@@ -39,61 +41,30 @@ public class BudgetTrackerService {
     ExpenseDAOImpl expenseDAO = new ExpenseDAOImpl();
     AccountTransaction accountTransaction = new AccountTransaction();
 
-    public void incomeOverview() {
-        try {
-            Scanner scanner = new Scanner(System.in);
-
-            String source = null;
+    public boolean incomeOverview(String incomeSource, String monthlyGoal) throws SQLException,  DataAccessException, MonthlyGoalException {
+    	
             IncomeExpenseSources incomeExpenseSources = null;
             while (incomeExpenseSources == null) {
-                System.out.println("Income Source: ");
-                source = scanner.nextLine();
-                incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(source);
+                incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(incomeSource);
                 if (incomeExpenseSources == null) {
                     throw new DataAccessException("\nError: No Income Source found.");
                 }
             }
 
-            Double goal = null;
-            while (goal == null) {
-                System.out.println("Enter your Monthly Goal: ");
-                goal = scanner.nextDouble();
-                if (goal <= 0) {
-                    System.out.println("Error: Monthly Goal must be a positive number.");
-                    goal = null; // Reset to retry
-                }
+            Double goal = Double.parseDouble(monthlyGoal);
+            if (goal <= 0) {
+            	throw new MonthlyGoalException("Error: Monthly Goal must be a positive number.");
+            }
+            
+            incomeExpenseSourcesImpl.monthlyGoal(incomeSource, goal);
+            Double incomeValue = incomeDAO.getIncomeBySourceFromIncomes(incomeSource);
+            if (incomeValue == null) {
+                throw new DataAccessException("No expense Found!");
             }
 
-            incomeExpenseSourcesImpl.monthlyGoal(source, goal);
-            Double incomeValue = incomeDAO.getIncomeBySourceFromIncomes(source);
-            System.out.println(incomeValue);
-
-            Double remaining = goal - incomeValue;
-            Double progress = (incomeValue / goal) * 100;
-
-            BudgetTracker budgetTracker = new BudgetTracker(
-                    null,
-                    remaining,
-                    null,
-                    progress);
-
-            if (budgetTracker != null) {
-                logger.info("Your remaining amount is " + remaining);
-                logger.info("Your progress is " + progress + "%");
-                logger.info("Income Updated. ");
-            }
-        } catch (InputMismatchException e) {
-            logger.error("Invalid input: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid income value: {}", e.getMessage());
-        } catch (DataAccessException e) {
-            logger.error("Database access error: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("An unexpected error occurred: {}", e.getMessage());
-            e.printStackTrace();
-        }
+            return false;
     }
-
+    
     public boolean setBudget(String name, String budget) throws SQLException, ExceedsPercentageException{
     
             Double totalPercentage = 0.0;
@@ -121,61 +92,28 @@ public class BudgetTrackerService {
         return false;
     }
 
-    public void expenseOverview() {
-        try {
-            Scanner scanner = new Scanner(System.in);
-
-            String expenseSource = null;
+    public boolean expenseOverview(String expenseSource, String monthlyBudget) throws SQLException, DataAccessException, MonthlyBudgetException {
+    	      
             IncomeExpenseSources incomeExpenseSources = null;
             while (incomeExpenseSources == null) {
-                System.out.println("Expense Source: ");
-                expenseSource = scanner.nextLine();
                 incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(expenseSource);
                 if (incomeExpenseSources == null) {
-                    throw new DataAccessException("\nError: No Income Source found.");
+                    throw new DataAccessException("\nError: No Expense Source found.");
                 }
             }
-
-            Double budget = null;
-            while (budget == null) {
-                System.out.println("Enter your Monthly Budget: ");
-                budget = scanner.nextDouble();
+            
+            Double budget = Double.parseDouble(monthlyBudget);
                 if (budget <= 0) {
-                    System.out.println("Error: Monthly Goal must be a positive number.");
-                    budget = null; // Reset to retry
+                    throw new MonthlyBudgetException ("Error: Monthly Budget must be a positive number.");
                 }
-            }
 
             incomeExpenseSourcesImpl.monthlyGoal(expenseSource, budget);
-            Double expenseValue = expenseDAO.getExpenseBySourceFromExpense(expenseSource);
+            List<Double> expenseValue = expenseDAO.getExpenseBySourceFromExpense(expenseSource);
             if (expenseValue == null) {
                 throw new DataAccessException("No expense Found!");
             }
-
-            Double remaining = budget + expenseValue;
-            expenseValue = Math.abs(expenseValue);
-            Double progress = (expenseValue / budget) * 100;
-
-            BudgetTracker budgetTracker2 = new BudgetTracker(
-                    null,
-                    remaining,
-                    null,
-                    progress);
-
-            if (budgetTracker2 != null) {
-                logger.info("Your remaining amount is " + remaining);
-                logger.info("Your progress is " + progress + "%");
-                logger.info("Expense Updated");
-            }
-
-        } catch (InputMismatchException e) {
-            logger.error("Invalid input: {}", e.getMessage());
-        } catch (DataAccessException e) {
-            logger.error("Database access error: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("An unexpected error occurred: {}", e.getMessage());
-            e.printStackTrace();
-        }
+            
+            return false;
     }
 
     public void IncomeOverviewDisplay(HttpServletRequest request, HttpServletResponse response) {
@@ -262,7 +200,6 @@ public class BudgetTrackerService {
                 throw new DataAccessException("NO Expense Found!");
             }
             request.setAttribute("budgetTrackerExpense", budgetTracker);
-            
             
         } catch (DataAccessException e) {
             logger.error("Database access error: {}", e.getMessage());

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -89,7 +90,7 @@ public class ExpenseDAOImpl implements ExpenseDAO {
         }
     }
 
-    public Double getExpenseBySourceFromExpense(String source) {
+    public List<Double> getExpenseBySourceFromExpense(String source) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             YearMonth currentMonth = YearMonth.now();
             LocalDate startDate = currentMonth.atDay(1);
@@ -98,22 +99,19 @@ public class ExpenseDAOImpl implements ExpenseDAO {
             String hql = "SELECT e.expense FROM Expense e " +
                     "JOIN e.incomeExpenseSourceId ies " +
                     "WHERE ies.incomeExpenseSource = :source AND e.date BETWEEN :startDate AND :endDate";
-            Query query = session.createQuery(hql);
+            
+            Query query = session.createQuery(hql, Double.class);
             query.setParameter("source", source);
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
+  
+            List<Double> expenses = query.getResultList(); 
+            return expenses.isEmpty() ? Collections.emptyList() : expenses;
 
-            try {
-                return (Double) query.getSingleResult();
-
-            } catch (NoResultException e) {
-                System.out.println("No income found for the given source.");
-                return null;
-            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }
+          }
     }
     
     public Double getTotalExpense() {

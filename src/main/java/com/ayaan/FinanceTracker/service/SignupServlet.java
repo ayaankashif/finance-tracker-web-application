@@ -25,10 +25,8 @@ public class SignupServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
-		request.getRequestDispatcher("sign-up.jsp").forward(request, response);
+		request.getRequestDispatcher("register.jsp").forward(request, response);
 	}
 
 	/**

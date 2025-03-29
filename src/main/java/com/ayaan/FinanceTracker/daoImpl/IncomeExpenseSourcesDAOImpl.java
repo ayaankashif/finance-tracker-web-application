@@ -113,7 +113,15 @@ public class IncomeExpenseSourcesDAOImpl implements IncomeExpenseSourcesDAO {
     //                 .list();
     //     }
     // }
-
+    
+    public List<Object[]> displayExpenseSrcWithBudget() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        	String hql = "SELECT ies.incomeExpenseSource, bt.name FROM IncomeExpenseSources ies INNER JOIN ies.budgetTracker bt";
+        			return session.createQuery(hql, Object[].class)
+                    .getResultList();
+        }
+    }
+    
     public List<IncomeExpenseSources> getAllIncomeExpenseSource() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("from IncomeExpenseSources", IncomeExpenseSources.class).list();

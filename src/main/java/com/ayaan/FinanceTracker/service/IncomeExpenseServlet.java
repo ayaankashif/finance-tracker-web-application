@@ -46,9 +46,17 @@ public class IncomeExpenseServlet extends HttpServlet {
 		String budgetTracker = request.getParameter("budgetTracker");
 		
 		try {
-			incomeService.addIncomeSource(incomeSource);
-			expenseService.addExpenseSource(expenseSource, budgetTracker);
+			
+			if(incomeSource != null) {
+				incomeService.addIncomeSource(incomeSource);				
+			}
+			
+			if(expenseSource != null && budgetTracker != null) {
+				expenseService.addExpenseSource(expenseSource, budgetTracker);
+			}
+			
 			response.getWriter().append("Source Added Successfully");
+			request.getRequestDispatcher("DashboardServlet").forward(request, response);
 
 		} catch (DataAccessException e) {
 			response.getWriter().append("Unexpected Error Occured");

@@ -18,7 +18,10 @@ public interface IncomeExpenseSourcesDAO {
 
     IncomeExpenseSources getIncomeExpenseSourcesbyId(Integer id);
 
-    List<IncomeExpenseSources> getAllIncomeExpenseSources(char type);
+    List<Object[]> displayExpenseSrcWithBudget();
 
     List<IncomeExpenseSources> getAllIncomeExpenseSource();
+    
+    List<IncomeExpenseSources> getAllIncomeExpenseSources(char type);
+    
 }

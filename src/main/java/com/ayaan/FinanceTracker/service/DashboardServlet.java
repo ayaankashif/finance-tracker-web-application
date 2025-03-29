@@ -64,7 +64,7 @@ public class DashboardServlet extends HttpServlet {
 		  budgetTrackerService.budgetOverview(request, response);
 		  incomeService.listIncome(request, response);
 		  expenseService.listExpense(response, request);
-		  incomeExpenseSources.listSources(response, request);
+		  incomeExpenseSources.listExpenseSrcWithBudget(response, request);
 		  bankAccountService.listBankAccount(request, response);
 		  Double totalAmount = accountDAO.getTotalBankBalance();
 		  Double totalExpense = expenseDAO.getTotalExpense();		

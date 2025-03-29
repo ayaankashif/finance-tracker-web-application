@@ -16,7 +16,7 @@ public interface ExpenseDAO {
     
     List<Expense> getAllExpense();
     
-    Double getExpenseBySourceFromExpense(String source);
+    List<Double> getExpenseBySourceFromExpense(String source);
     
     Double getTotalExpense();
     

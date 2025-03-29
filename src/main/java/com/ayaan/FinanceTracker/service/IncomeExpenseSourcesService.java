@@ -61,7 +61,24 @@ public class IncomeExpenseSourcesService {
         } catch (Exception e) {
             logger.info("An unexpected error occurred.");
             e.printStackTrace();
+        }
     }
-}
+        
+    public void listExpenseSrcWithBudget(HttpServletResponse response, HttpServletRequest request) throws IOException {
+        try {
+            List<Object[]> expenseSource = incomeExpenseSourcesDAO.displayExpenseSrcWithBudget();
+            if (expenseSource == null) {
+                throw new DataAccessException("No Sources found");
+            }
+            
+            request.setAttribute("expenseSource", expenseSource);
+           	
+        } catch(DataAccessException e){  
+            logger.error("Database error while fetching income sources: {}", e.getMessage());
+        } catch (Exception e) {
+            logger.info("An unexpected error occurred.");
+            e.printStackTrace();
+        }
+    }
 
 }

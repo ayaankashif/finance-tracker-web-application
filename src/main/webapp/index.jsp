@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="assets/vendors/simple-line-icons/css/simple-line-icons.css">
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -56,11 +58,11 @@
             </button>
           </div>
           <div>
-            <a class="navbar-brand brand-logo" href="index.html">
+            <a class="navbar-brand brand-logo" href="DashboardServlet">
               <!-- <img src="assets/images/logo.svg" alt="logo" /> -->
               <h4> Finance Tracker</h4>
             </a>
-            <a class="navbar-brand brand-logo-mini" href="index.html">
+            <a class="navbar-brand brand-logo-mini" href="DashboardServlet">
               <img src="assets/images/logo-mini.svg" alt="logo" />
             </a>
           </div>
@@ -251,9 +253,22 @@
                 <span class="menu-title">Bank Account</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="tables">
+              <div class="collapse" id="tables" >
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item"> <a class="nav-link" href="basic-table.html">Active Banks</a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">User Pages</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="auth">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="SigninServlet"> Login </a></li>
+                  <li class="nav-item"> <a class="nav-link" href="SignupServlet"> Register </a></li>
                 </ul>
               </div>
             </li>
@@ -390,7 +405,7 @@
                   <div class="card-body">
                       <div class="d-flex justify-content-between align-items-center">
                     	<h4 class="card-title"><i class="fa-solid fa-chart-pie"></i> Budget Tracker</h4>
-  						<a href="BudgetTrackerServlet" class="btn btn-primary text-white me-0">
+  						<a href="#" class="btn btn-primary text-white me-0" data-bs-toggle="modal" data-bs-target="#budgetModal">
     					<i class="fa-solid fa-wallet"></i> Set Budget
   						</a>
 					  </div>
@@ -436,6 +451,33 @@
                   </div>
                 </div>
               </div>
+              
+              <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="budgetModalLabel">Set Your Budget</h5>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+				        <!-- Budget Form -->
+				        <form class="forms-sample material-form" method="post" action= "BudgetTrackerServlet" >
+				          <div class="mb-3">
+				            <label for="budgetName" class="form-label">Budget Category</label>
+				            <input type="text" class="form-control" id="budgetName" name="budget" placeholder="Category">
+				          </div>
+				          <div class="mb-3">
+				            <label for="budgetAmount" class="form-label">Budget Percentage</label>
+				            <input type="text" class="form-control" id="budgetAmount" name="budgetPer" placeholder="Budget Percentage">
+				          </div>
+				         <div class="button-container">
+                        	<button type="submit" class="button btn btn-primary"><span>Submit</span></button>
+                    	</div>
+				        </form>
+				      </div>
+				    </div>
+				  </div>
+				</div>
                     
                       
           	<div class = "row">
@@ -497,8 +539,8 @@
                     </div>
                     <div class="form-group">
                       <label>Link your expense to one of your budgets</label>
-                      <select class="js-example-basic-single w-100" required= "required" name = "budgetTracker" style="border: 1px solid #d3d3d3; padding: 5px; border-radius: 4px; height: 35px;">
-                        <c:forEach var="budget" items="${budgetName}">
+                      <select class="js-example-basic-single w-100" name= "budgetTracker" required= "required" style="border: 1px solid #d3d3d3; padding: 5px; border-radius: 4px; height: 35px;">
+                         <c:forEach var="budget" items="${budgetName}">
         						<option>${budget.name}</option>
     					</c:forEach>
                       </select>
@@ -526,10 +568,7 @@
                     </form>
                   </div>
                 </div>
-              </div>
-              
-              
-               
+              </div>               
                           <!-- <div class="row flex-grow">
                             <div class="col-12 grid-margin stretch-card">
                               <div class="card card-rounded">
@@ -807,7 +846,12 @@
                          <div class="col-lg-12 grid-margin stretch-card">
                 			<div class="card">
                   				<div class="card-body">
-									<h4 class="card-title">Income Overview</h4>
+									<div class="d-flex justify-content-between align-items-center">
+                    					<h4 class="card-title"><i class="mdi mdi-arrow-up-bold"></i> Income Overview</h4>
+					  						<a href="#" class="btn btn-primary text-white me-0" data-bs-toggle="modal" data-bs-target="#IncomeModal">
+					    						<i class="mdi mdi-cash-check"></i> Set Monthly Goal
+					  						</a>
+										</div>
 										<table class="table table-striped">
 											<thead>
 												<tr>
@@ -866,30 +910,62 @@
         <%
             }
         %>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		 <div class="modal fade" id="IncomeModal" tabindex="-1" aria-labelledby="IncomeModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="IncomeModalLabel">Set your Monthly Goal</h5>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+				        <!-- Budget Form -->
+				        <form class="forms-sample material-form" method="post" action= "BudgetTrackerServlet" >
+				          <div class="mb-3">
+				            <label for="budgetName" class="form-label">Income Source</label>
+				            <input type="text" class="form-control" id="budgetName" name="incomeSource" placeholder="Source">
+				          </div>
+				          <div class="mb-3">
+				            <label for="budgetAmount" class="form-label">Amount</label>
+				            <input type="text" class="form-control" id="budgetAmount" name="monthlyGoal" placeholder="Enter Goal">
+				          </div>
+				         <div class="button-container">
+                        	<button type="submit" class="button btn btn-primary"><span>Submit</span></button>
+                    	</div>
+				        </form>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
 								
-					<div class="tab-pane fade" id="demographics" role="tabpanel" aria-labelledby="contact-tab">
-                         <div class="col-lg-12 grid-margin stretch-card">
-                			<div class="card">
-                  				<div class="card-body">
-									<h4 class="card-title">Expense Overview</h4>
-										<table class="table table-striped">
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Current Month</th>
-													<th>Monthly Budget</th>
-													<th>Remaining</th>
-													<th>Progress</th>
-													<th>Budget Tracker</th>
-												</tr>
-											</thead>
-											<tbody>								
+				<div class="tab-pane fade" id="demographics" role="tabpanel" aria-labelledby="contact-tab">
+                    <div class="col-lg-12 grid-margin stretch-card">
+           			<div class="card">
+             		<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+               			<h4 class="card-title"><i class="mdi mdi-arrow-down-bold"></i> Expense Overview</h4>
+  						<a href="#" class="btn btn-primary text-white me-0" data-bs-toggle="modal" data-bs-target="#ExpenseModal">
+    						<i class="mdi mdi-finance"></i>Set Monthly Budget
+  						</a>
+					</div>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Current Month</th>
+								<th>Monthly Budget</th>
+								<th>Remaining</th>
+								<th>Progress</th>
+								<th>Budget Tracker</th>
+							</tr>
+						</thead>
+						<tbody>								
 		<%
             try {
                 List<Object[]> budgetTracker = budgetTrackerDAO.displayExpense();
@@ -934,21 +1010,74 @@
         <%
             }
         %>
-												</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-						</div>
-                        
-                        
-                      </div>
+							</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+			<div class="modal fade" id="ExpenseModal" tabindex="-1" aria-labelledby="ExpenseModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="ExpenseModalLabel">Set your Monthly Goal</h5>
+				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div class="modal-body">
+				        <!-- Budget Form -->
+				        <form class="forms-sample material-form" method="post" action= "BudgetTrackerServlet" >
+				          <div class="mb-3">
+				            <label for="budgetName" class="form-label">Expense Source</label>
+				            <input type="text" class="form-control" id="budgetName" name="expenseSource" placeholder="Source">
+				          </div>
+				          <div class="mb-3">
+				            <label for="budgetAmount" class="form-label">Amount</label>
+				            <input type="text" class="form-control" id="budgetAmount" name="monthlyBudget" placeholder="Enter Goal">
+				          </div>
+				         <div class="button-container">
+                        	<button type="submit" class="button btn btn-primary"><span>Submit</span></button>
+                    	</div>
+				        </form>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				
+				<div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Linked Expense Sources</h4>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Expense Name</th>
+                            <th>Expense Source</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="source" items="${expenseSource}">
+								<tr>
+									<td>${source[0]}</td>
+                					<td>${source[1]}</td>
+                				</tr>
+                			</c:forEach>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+			
+			</div>
+                        
+                 
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
@@ -1041,7 +1170,7 @@
     setInterval(getTimeSpent, 1000); // Update every second
 </script>
     
-    <!-- <script src="assets/js/Chart.roundedBarCharts.js"></script> -->
+    <script src="assets/js/Chart.roundedBarCharts.js"></script>
     <!-- End custom js for this page-->
   </body>
 </html>
