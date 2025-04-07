@@ -142,8 +142,8 @@ public class IncomeService {
 		        }
 
 		        // Calculate total income
-		        double totalIncome = incomes.stream().mapToDouble(Income::getIncome).sum();
-
+		        Double totalIncome = incomes != null ? incomes.stream().mapToDouble(Income::getIncome).sum(): 0.0;
+		        
 		        // Set attributes for JSP
 		        request.setAttribute("income", incomes);
 		        request.setAttribute("totalIncome", totalIncome);

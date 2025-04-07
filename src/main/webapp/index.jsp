@@ -347,9 +347,13 @@
                               <h3 class="rate-percentage">$<%= request.getAttribute("totalBalance") %></h3>
                               <p class="text-danger d-flex"><i class="mdi mdi-menu-down"></i><span>-0.5%</span></p>
                             </div>
+                            <%
+							    Object incomeObj = request.getAttribute("totalIncome");
+							    double income = (incomeObj != null) ? Double.parseDouble(incomeObj.toString()) : 0.0;
+							%>
                             <div>
                               <p class="statistics-title">Monthly Income</p>
-                              <h3 class="rate-percentage" style="font-weight: bold; font-size: 24px;">$<%= request.getAttribute("totalIncome") %></h3>
+                              <h3 class="rate-percentage" style="font-weight: bold; font-size: 24px;">$<%= income %></h3>
                               <p class="text-success d-flex"><i class="mdi mdi-menu-up"></i><span>+0.1%</span></p>
                             </div>
                             <div>

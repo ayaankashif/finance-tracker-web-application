@@ -125,10 +125,12 @@ public class ExpenseDAOImpl implements ExpenseDAO {
 	             "FROM Expense e " +
 	             "WHERE e.date BETWEEN :startDate AND :endDate";
 		
-	         return session.createQuery(hql, Double.class)
+	         Double result = session.createQuery(hql, Double.class)
 				.setParameter("startDate", Date.valueOf(startDate))
 				.setParameter("endDate", Date.valueOf(endDate))
 				.uniqueResult();
+	         
+	         return result != null ? result : 0.0;
 		 	}
 		}
 	}

@@ -49,7 +49,7 @@ public class DashboardServlet extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * @throws IOException
 	 * @throws ServletException
@@ -58,7 +58,6 @@ public class DashboardServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		  budgetTrackerService.expenseOverviewDisplay(request, response);
 		  budgetTrackerService.IncomeOverviewDisplay(request, response);
 		  budgetTrackerService.budgetOverview(request, response);
@@ -66,10 +65,10 @@ public class DashboardServlet extends HttpServlet {
 		  expenseService.listExpense(response, request);
 		  incomeExpenseSources.listExpenseSrcWithBudget(response, request);
 		  bankAccountService.listBankAccount(request, response);
-		  Double totalAmount = accountDAO.getTotalBankBalance();
+		  Double totalAmount = accountDAO.getTotalBankBalance();  
 		  Double totalExpense = expenseDAO.getTotalExpense();		
 		  
-		  if(totalExpense < 0 ) {
+		  if(totalExpense != null && totalExpense < 0) {
 			  totalExpense = Math.abs(totalExpense);
 		  }
 		  

@@ -84,9 +84,10 @@ public class IncomeServlet extends HttpServlet {
 		
 		try {
 			incomeService.addIncome(name, bankAccount, income, incomeSources);
+			response.setContentType("text/html");
 			response.getWriter().append("Income Added Successfully");
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-
+			request.getRequestDispatcher("index.jsp").include(request, response);
+			
 		} catch (SQLException e) {
 			response.getWriter().append("Failed to Proceed");
 			request.getRequestDispatcher("Inc.jsp").include(request, response);
