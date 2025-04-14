@@ -30,6 +30,18 @@
     <link rel="shortcut icon" href="assets/images/favicon.png" />
   </head>
   <body>
+  <%
+	String userName = null;
+	Cookie[] cookies = request.getCookies();
+	if (cookies != null) {
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("name"))
+				userName = cookie.getValue();
+			}
+		}
+	if (userName == null)
+		response.sendRedirect("LoginServlet");
+	%>
     <div class="container-scroller">
       <!-- partial:../../partials/_navbar.html -->
       <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
@@ -259,15 +271,19 @@
                   <div class="card-body">
                     <h4 class="card-title"><i class="fa-solid fa-arrow-trend-up"></i> Income</h4>
                     <p class="card-description">Manage your Income</p>
-                    <form class="forms-sample material-form" method= "post" action="IncomeServlet">
+                    <form  id="incomeForm" class="forms-sample material-form">
                       <div class="form-group">
                         <input type="text" required="required" name= "name" />
                         <label for="input" class="control-label">Name</label><i class="bar"></i>
                       </div>
                       <div class="form-group">
-                        <input type="text" required="required" name= "bankAccount" />
-                        <label for="input" class="control-label">Bank Account</label><i class="bar"></i>
-                      </div>
+                      <label>Bank Accounts</label>
+                      <select class="js-example-basic-single w-100" name= "bankAccount" required= "required" style="border: 1px solid #d3d3d3; padding: 5px; border-radius: 4px; height: 35px;">
+                        	<c:forEach var="bank" items="${bankName}">
+									<option>${bank.name}</option>
+    						</c:forEach>
+                      </select>
+                    </div>
                       <div class="form-group">
                         <input type="text" required="required" name="income" />
                         <label for="input" class="control-label">Income</label><i class="bar"></i>
@@ -281,7 +297,7 @@
     					</c:forEach> 
     					
                       </select>
-                    </div>
+                      </div>
                       <div class="button-container">
                         <button type="submit" class="button btn btn-primary"><span>Submit</span></button>
                       </div>
@@ -291,6 +307,7 @@
               </div>
               
               <div class="col-lg-6 grid-margin stretch-card">
+              <div id="incomeTableContainer">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Income Overview</h4>
@@ -321,7 +338,7 @@
                   </div>
                 </div>
               </div>
-              
+              </div>
               
              <!--  <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
@@ -467,5 +484,29 @@
     <script src="assets/js/typeahead.js"></script>
     <script src="assets/js/select2.js"></script>
     <!-- End custom js for this page-->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#incomeForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'IncomeServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+        	
+          alert("Success: " + responseText);
+          $('#incomeTableContainer').load(window.location.href + ' #incomeTableContainer>*', '');
+          $('#incomeForm')[0].reset(); 
+        },
+        error: function (xhr) {
+       		alert("Error: " + xhr.responseText); 
+        }
+      });
+    });
+  });
+</script>
+
   </body>
 </html>

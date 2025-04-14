@@ -36,6 +36,18 @@
     <link rel="shortcut icon" href="assets/images/favicon.png" />
   </head>
   <body class="with-welcome-text" onload="updateClock()">
+  <%
+	String userName = null;
+	Cookie[] cookies = request.getCookies();
+	if (cookies != null) {
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("name"))
+				userName = cookie.getValue();
+			}
+		}
+	if (userName == null)
+		response.sendRedirect("LoginServlet");
+	%>
     <div class="container-scroller">
       <div class="row p-0 m-0 proBanner" id="proBanner">
         <div class="col-md-12 p-0 m-0">
@@ -58,19 +70,27 @@
             </button>
           </div>
           <div>
-            <a class="navbar-brand brand-logo" href="DashboardServlet">
-              <!-- <img src="assets/images/logo.svg" alt="logo" /> -->
-              <h4> Finance Tracker</h4>
+            <a class="navbar-brand brand-logo" style="display: flex; align-items: center; gap: 4px;font-family: 'Georgia', 'Garamond', 'Times New Roman', serif;" href="DashboardServlet">
+             <!--  <img src="assets/images/logo.svg" alt="logo" /> -->
+              <h4 style="margin: 0;">Finance</h4>
+			  <h4 style="margin: 0; color: blue;">Tracker</h4>
             </a>
             <a class="navbar-brand brand-logo-mini" href="DashboardServlet">
               <img src="assets/images/logo-mini.svg" alt="logo" />
             </a>
           </div>
+         	<!-- <div class="brand-logo" style="display: flex; align-items: center; gap: 4px;font-family: 'Georgia', 'Garamond', 'Times New Roman', serif;"> 
+			   	<h4 style="margin: 0;">Finance</h4>
+				<h4 style="margin: 0; color: blue;">Tracker</h4>
+				<a class="navbar-brand brand-logo-mini" href="DashboardServlet">
+		            <img src="assets/images/logo-mini.svg" alt="logo" />
+		        </a>
+        	</div> -->
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-top">
           <ul class="navbar-nav">
             <li class="nav-item fw-semibold d-none d-lg-block ms-0">
-              <h1 class="welcome-text">Welcome Back, <span class="text-black fw-bold">Ayaan Kashif</span></h1>
+              <h1 class="welcome-text">Welcome Back, <span class="text-black fw-bold"><%=userName%></span></h1>
               <h3 class="welcome-sub-text">Your performance summary this week </h3>
             </li>
           </ul>
@@ -267,7 +287,7 @@
               </a>
               <div class="collapse" id="auth">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="SigninServlet"> Login </a></li>
+                  <li class="nav-item"> <a class="nav-link" href="LoginServlet"> Login </a></li>
                   <li class="nav-item"> <a class="nav-link" href="SignupServlet"> Register </a></li>
                 </ul>
               </div>
@@ -1176,5 +1196,28 @@
     
     <script src="assets/js/Chart.roundedBarCharts.js"></script>
     <!-- End custom js for this page-->
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#expenseForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'ExpenseServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+         
+          alert("Success: " + responseText);
+          $('#expenseTableContainer').load(window.location.href + ' #expenseTableContainer>*', '');
+          $('#expenseForm')[0].reset(); m
+        },
+        error: function (xhr) {
+        	alert("Error: " + xhr.responseText); 
+        }
+      });
+    });
+  });
+</script>
   </body>
 </html>

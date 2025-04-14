@@ -34,41 +34,41 @@
           <div class="row w-100 mx-0">
             <div class="col-lg-4 mx-auto">
               <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-                <div class="brand-logo">
-                  <img src="assets/images/logo.svg" alt="logo">
+                <div class="brand-logo" style="display: flex; align-items: center; gap: 4px;font-family: 'Georgia', 'Garamond', 'Times New Roman', serif;""> 
+                <!--   <img src="assets/images/logo.svg" alt="logo"> -->
+                   	<h4 style="margin: 0;">Finance</h4>
+  					<h4 style="margin: 0; color: blue;">Tracker</h4>
                 </div>
                 <h4>New here?</h4>
                 <h6 class="fw-light">Signing up is easy. It only takes a few steps</h6>
-                <form class="pt-3">
+                <%
+					    String errorMessage = (String) request.getAttribute("errorMessage");
+					    if (errorMessage != null) {
+					%>
+					    <div style="color:red;"><%= errorMessage %></div>
+					<%
+					    }
+				%>
+                <form class="pt-3" method= "post" action= "SignupServlet">
                   <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Username">
+                    <input type="text" class="form-control form-control-lg" required id="exampleInputUsername1" placeholder="Username" name = "userName">
                   </div>
                   <div class="form-group">
-                    <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email">
+                    <input type="email" class="form-control form-control-lg" required id="exampleInputEmail1" placeholder="Email" name = "email">
                   </div>
                   <div class="form-group">
-                    <select class="form-select form-select-lg" id="exampleFormControlSelect2">
-                      <option>Country</option>
-                      <option>United States of America</option>
-                      <option>United Kingdom</option>
-                      <option>India</option>
-                      <option>Germany</option>
-                      <option>Argentina</option>
-                    </select>
+                    <input type="password" class="form-control form-control-lg" required id="exampleInputPassword1" placeholder="Password" name= "password">
                   </div>
-                  <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
-                  </div>
-                  <div class="mb-4">
+                  <!-- <div class="mb-4">
                     <div class="form-check">
                       <label class="form-check-label text-muted">
                         <input type="checkbox" class="form-check-input"> I agree to all Terms & Conditions </label>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="mt-3 d-grid gap-2">
-                    <a class="btn btn-block btn-primary btn-lg fw-medium auth-form-btn" href="../../index.html">SIGN UP</a>
+                    <button type="submit" class="btn btn-block btn-primary btn-lg fw-medium auth-form-btn"><span>SIGN UP</span></button>
                   </div>
-                  <div class="text-center mt-4 fw-light"> Already have an account? <a href="SigninServlet" class="text-primary">Login</a>
+                  <div class="text-center mt-4 fw-light"> Already have an account? <a href="LoginServlet" class="text-primary">Login</a>
                   </div>
                 </form>
               </div>
