@@ -1,9 +1,10 @@
-package com.ayaan.FinanceTracker.service;
+package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import com.ayaan.FinanceTracker.exceptionHandling.MonthlyGoalException;
 import com.ayaan.FinanceTracker.models.BudgetTracker;
 import com.ayaan.FinanceTracker.models.Expense;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
+import com.ayaan.FinanceTracker.service.BudgetTrackerService;
 
 /**
  * Servlet implementation class BudgetTrackerServlet
@@ -77,18 +79,27 @@ public class BudgetTrackerServlet extends HttpServlet {
 			request.getRequestDispatcher("DashboardServlet").include(request, response);
 			
 		} catch (SQLException e) {
-			response.getWriter().append("Failed to Proceed");
+			request.setAttribute("errorMessage","Failed to proceed!");
+		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+		    rd.forward(request, response);
 		} catch (ExceedsPercentageException e) {
-			response.getWriter().append("Unexpected Error Occured ");
-			response.getWriter().append(e.getMessage());
+			request.setAttribute("errorMessage",e.getMessage());
+		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+		    rd.forward(request, response);
 		} catch (MonthlyGoalException e) {
-			response.getWriter().append("Unexpected Error Occured ");
-			response.getWriter().append(e.getMessage());
+			request.setAttribute("errorMessage","Unexpected Error Occured ");
+			request.setAttribute("errorMessage",e.getMessage());
+		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+		    rd.forward(request, response);
 		} catch (MonthlyBudgetException e) {
-			response.getWriter().append("Unexpected Error Occured ");
-			response.getWriter().append(e.getMessage());
+			request.setAttribute("errorMessage","Unexpected Error Occured ");
+			request.setAttribute("errorMessage",e.getMessage());
+		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+		    rd.forward(request, response);
 		} catch (Exception e) {
-			response.getWriter().append("An Error Occured");
+			request.setAttribute("errorMessage","An Error Occured");
+		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+		    rd.forward(request, response);
 			e.printStackTrace();
 		}
 	}

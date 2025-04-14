@@ -1,4 +1,4 @@
-package com.ayaan.FinanceTracker.service;
+package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.service.ExpenseService;
+import com.ayaan.FinanceTracker.service.IncomeExpenseSourcesService;
+import com.ayaan.FinanceTracker.service.IncomeService;
 
 /**
  * Servlet implementation class IncomeExpenseServlet

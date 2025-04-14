@@ -1,4 +1,4 @@
-package com.ayaan.FinanceTracker.service;
+	package com.ayaan.FinanceTracker.service;
 
 import java.sql.Date;
 import java.sql.SQLException;
@@ -30,6 +30,7 @@ public class BankAccountService {
             if (bankAccount != null) {
                 throw new BankAlreadyExistException("Bank Account already exists");
             }
+            
             bankAccount = new BankAccount(bankName, new Date(System.currentTimeMillis()));
             bankAccountDAO.saveBankAccount(bankAccount);
             logger.info("Bank Account Added");

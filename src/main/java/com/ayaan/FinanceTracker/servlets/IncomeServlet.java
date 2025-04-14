@@ -1,4 +1,4 @@
-package com.ayaan.FinanceTracker.service;
+package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,6 +28,9 @@ import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
 import com.ayaan.FinanceTracker.models.Income;
 import com.ayaan.FinanceTracker.models.IncomeExpenseSources;
+import com.ayaan.FinanceTracker.service.BankAccountService;
+import com.ayaan.FinanceTracker.service.IncomeExpenseSourcesService;
+import com.ayaan.FinanceTracker.service.IncomeService;
 
 /**
  * Servlet implementation class IncomeServlet
@@ -41,6 +44,7 @@ public class IncomeServlet extends HttpServlet {
 	IncomeExpenseSourcesDAO incomeExpenseSourcesDAO = new IncomeExpenseSourcesDAOImpl();
 	BankAccountDAO bankAccountDAO = new BankAccountDAOImpl();
 	IncomeExpenseSourcesService incomeExpenseSources = new IncomeExpenseSourcesService();
+	BankAccountService bankAccountService = new BankAccountService();
 
 	/**
 	 * Default constructor.
@@ -59,6 +63,7 @@ public class IncomeServlet extends HttpServlet {
 	
 		incomeService.listIncome(request, response);
 		incomeExpenseSources.listSources(response, request);
+		bankAccountService.listBankAccount(request, response);
 		request.getRequestDispatcher("Inc.jsp").forward(request, response);
 		
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -84,33 +89,19 @@ public class IncomeServlet extends HttpServlet {
 		
 		try {
 			incomeService.addIncome(name, bankAccount, income, incomeSources);
-			response.setContentType("text/html");
-			response.getWriter().append("Income Added Successfully");
-			request.getRequestDispatcher("index.jsp").include(request, response);
-			
+			response.setContentType("text/plain");
+			response.getWriter().write("Income Added Successfuly.");
+		    
 		} catch (SQLException e) {
-			response.getWriter().append("Failed to Proceed");
-			request.getRequestDispatcher("Inc.jsp").include(request, response);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Database error occurred.");
 		} catch(DataAccessException e) {
-			response.getWriter().append("Unexpected Error Occured");	
-			response.getWriter().append(e.getMessage());
-			request.getRequestDispatcher("Inc.jsp").include(request, response);
-			PrintWriter out = response.getWriter();
-			out.println("<font color=red>Either user name or password is wrong.</font>");
-			
+			 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			 response.getWriter().write(e.getMessage());
 		} catch (Exception e) {
-			response.getWriter().append("An Error Occured");
-			e.printStackTrace();
+			 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			 response.getWriter().write("Unexpected Error Occurred");
 		}
-		
-	
-		/*
-		 * }else { RequestDispatcher rd =
-		 * getServletContext().getRequestDispatcher("sign-in.jsp"); 
-		 * 
-		 * }
-		 */
-
 }
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)

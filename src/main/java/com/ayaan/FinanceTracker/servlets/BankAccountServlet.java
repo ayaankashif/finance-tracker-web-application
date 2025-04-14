@@ -1,4 +1,4 @@
-package com.ayaan.FinanceTracker.service;
+package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -15,6 +15,7 @@ import com.ayaan.FinanceTracker.dao.BankAccountDAO;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.BankAlreadyExistException;
 import com.ayaan.FinanceTracker.models.BankAccount;
+import com.ayaan.FinanceTracker.service.BankAccountService;
 
 /**
  * Servlet implementation class BankAccountServlet

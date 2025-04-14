@@ -1,8 +1,9 @@
-package com.ayaan.FinanceTracker.service;
+package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.service.BankAccountService;
+import com.ayaan.FinanceTracker.service.ExpenseService;
+import com.ayaan.FinanceTracker.service.IncomeExpenseSourcesService;
 
 /**
  * Servlet implementation class ExpenseServlet
@@ -21,6 +25,7 @@ public class ExpenseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	ExpenseService expenseService = new ExpenseService();
 	IncomeExpenseSourcesService incomeExpenseSources = new IncomeExpenseSourcesService();
+	BankAccountService bankAccountService = new BankAccountService();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -40,6 +45,7 @@ public class ExpenseServlet extends HttpServlet {
 
 		expenseService.listExpense(response, request);
 		incomeExpenseSources.listSources(response, request);
+		bankAccountService.listBankAccount(request, response);
 		request.getRequestDispatcher("Exp.jsp").forward(request, response);
 	}
 
@@ -57,18 +63,19 @@ public class ExpenseServlet extends HttpServlet {
 		
 		try {
 			expenseService.addExpense(name, bankAccount, expense, expenseSource);
-			response.getWriter().append("Expense Added Successfully");
+			response.setContentType("text/plain");
+			response.getWriter().write("Expense Added Successfully.");
 
 		} catch (DataAccessException e) {
-			response.getWriter().append("Database error while fetching income sources");
-			response.getWriter().append(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			 response.getWriter().write(e.getMessage());
 		} catch (SQLException e) {
-			response.getWriter().append("Failed to Proceed");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Database error occurred.");
 		} catch (Exception e) {
-			response.getWriter().append("\nError: Invalid input");
-			e.printStackTrace();
+			 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			 response.getWriter().write("Unexpected Error Occurred");
+			 e.printStackTrace();
 		}
-
 	}
-
 }
