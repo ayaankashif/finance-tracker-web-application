@@ -52,7 +52,6 @@ public class SignupServlet extends HttpServlet {
 			userService.saveUsers(userName, email, password);
 			response.setContentType("text/html");
 			response.getWriter().append("User Added Successfully");
-//			request.getRequestDispatcher("LoginServlet").include(request, response);
 			response.sendRedirect("LoginServlet");
 				
 		}catch(SQLException e) {

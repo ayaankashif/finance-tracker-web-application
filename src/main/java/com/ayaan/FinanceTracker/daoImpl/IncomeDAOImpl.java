@@ -108,7 +108,7 @@ public class IncomeDAOImpl implements IncomeDAO {
             LocalDate startDate = currentMonth.atDay(1);
             LocalDate endDate = currentMonth.atEndOfMonth();
 
-            String hql = "SELECT i.income FROM Income i " +
+            String hql = "SELECT sum(i.income) FROM Income i " +
                     "JOIN i.incomeSources ies " +
                     "WHERE ies.incomeExpenseSource = :source AND i.date BETWEEN :startDate AND :endDate";
             Query query = session.createQuery(hql);
@@ -129,5 +129,4 @@ public class IncomeDAOImpl implements IncomeDAO {
             return null;
         }
     }
-
 }

@@ -1,7 +1,9 @@
 package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,7 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ayaan.FinanceTracker.dao.BudgetTrackerDAO;
+import com.ayaan.FinanceTracker.daoImpl.BudgetTrackerDAOImpl;
+import com.ayaan.FinanceTracker.daoImpl.ExpenseDAOImpl;
+import com.ayaan.FinanceTracker.dao.ExpenseDAO;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
+import com.ayaan.FinanceTracker.exceptionHandling.LowBalanceException;
+import com.ayaan.FinanceTracker.models.BudgetTracker;
+import com.ayaan.FinanceTracker.models.Expense;
 import com.ayaan.FinanceTracker.service.BankAccountService;
 import com.ayaan.FinanceTracker.service.ExpenseService;
 import com.ayaan.FinanceTracker.service.IncomeExpenseSourcesService;
@@ -46,6 +55,17 @@ public class ExpenseServlet extends HttpServlet {
 		expenseService.listExpense(response, request);
 		incomeExpenseSources.listSources(response, request);
 		bankAccountService.listBankAccount(request, response);
+		
+		/*
+		 * ExpenseDAO dao = new ExpenseDAOImpl(); List<Expense> expenseList =
+		 * dao.getAllExpense(); // Adjust based on your method
+		 * 
+		 * response.setContentType("text/html"); PrintWriter out = response.getWriter();
+		 * 
+		 * for (Expense expense : expenseList) { out.println("<option>" +
+		 * expense.getName() + "</option>"); }
+		 */
+		
 		request.getRequestDispatcher("Exp.jsp").forward(request, response);
 	}
 
@@ -66,8 +86,11 @@ public class ExpenseServlet extends HttpServlet {
 			response.setContentType("text/plain");
 			response.getWriter().write("Expense Added Successfully.");
 
+		} catch (LowBalanceException e) {
+			 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			 response.getWriter().write(e.getMessage());
 		} catch (DataAccessException e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			 response.getWriter().write(e.getMessage());
 		} catch (SQLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

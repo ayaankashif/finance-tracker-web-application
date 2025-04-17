@@ -14,12 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ayaan.FinanceTracker.models.BudgetTracker;
+import com.ayaan.FinanceTracker.daoImpl.AccountTransactionDAOImpl;
+import com.ayaan.FinanceTracker.dao.AccountTransactionDAO;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.BudgetTrackerDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.ExpenseDAOImpl;
 import com.ayaan.FinanceTracker.daoImpl.IncomeExpenseSourcesDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.exceptionHandling.InvalidIDException;
+import com.ayaan.FinanceTracker.exceptionHandling.LowBalanceException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
 import com.ayaan.FinanceTracker.models.Expense;
@@ -35,9 +38,10 @@ public class ExpenseService {
     AccountTransactionService accountTransactionImpl = new AccountTransactionService();
     ExpenseDAOImpl expenseDAO = new ExpenseDAOImpl();
     AccountTransaction accountTransaction = new AccountTransaction();
+    AccountTransactionDAO accountTransactionDAO = new AccountTransactionDAOImpl();
     BudgetTrackerDAOImpl budgetTrackerDAO = new BudgetTrackerDAOImpl();
 
-    public boolean addExpense(String name, String bankAccountName, String expense, String expenseSource) throws DataAccessException, SQLException  {
+    public boolean addExpense(String name, String bankAccountName, String expense, String expenseSource) throws DataAccessException, SQLException, LowBalanceException  {
        
         	double expenseValue = Double.parseDouble(expense);
         	
@@ -50,6 +54,12 @@ public class ExpenseService {
                 if (bankAccount == null) {
                     throw new DataAccessException(
                             "\nError: No Bank account found. Please enter a valid bank account name.");
+                } else {
+                	accountTransaction = accountTransactionDAO.getTransactionById(bankAccount.getBankAccId());
+                	if(accountTransaction.getTransactionAmt() == null || accountTransaction.getTransactionAmt() <= 0) {
+                		throw new LowBalanceException("Warning: Low Balance in account " + bankAccount.getName() + ". Please add funds.");
+                	}
+                	
                 }
 
             IncomeExpenseSources incomeExpenseSources = null;
