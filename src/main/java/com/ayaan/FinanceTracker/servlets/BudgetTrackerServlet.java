@@ -1,6 +1,7 @@
 package com.ayaan.FinanceTracker.servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ayaan.FinanceTracker.daoImpl.BudgetTrackerDAOImpl;
+import com.ayaan.FinanceTracker.dao.BudgetTrackerDAO;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.exceptionHandling.ExceedsPercentageException;
 import com.ayaan.FinanceTracker.exceptionHandling.MonthlyBudgetException;
@@ -43,8 +46,15 @@ public class BudgetTrackerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
+		    BudgetTrackerDAO dao = new BudgetTrackerDAOImpl();
+		    List<BudgetTracker> budgetList = dao.getAllBudgets(); 
+
+		    response.setContentType("text/html");
+		    PrintWriter out = response.getWriter();
+
+		    for (BudgetTracker budget : budgetList) {
+		        out.println("<option>" + budget.getName() + "</option>");
+		    }
 	}
 
 	/**
@@ -65,41 +75,36 @@ public class BudgetTrackerServlet extends HttpServlet {
 			
 			if(budget != null && budgetPer != null) {
 				budgetTrackerService.setBudget(budget, budgetPer);
+				response.getWriter().append("Budget Updated Successfully");
 			}
 			
 			if(monthlyGoal != null && incomeSource != null) {
 				budgetTrackerService.incomeOverview(incomeSource, monthlyGoal);
-				response.getWriter().append("Budget Updated Successfully");
+				response.getWriter().append("Monthly Goal Updated Successfully");
 			}
 			
 			if(monthlyBudget != null && expenseSource != null) {
 				budgetTrackerService.expenseOverview(expenseSource, monthlyBudget);
+				response.getWriter().append("Monthly Budget Updated Successfully");
 			}
 			
 			request.getRequestDispatcher("DashboardServlet").include(request, response);
 			
 		} catch (SQLException e) {
-			request.setAttribute("errorMessage","Failed to proceed!");
-		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-		    rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Database error occurred.");
 		} catch (ExceedsPercentageException e) {
-			request.setAttribute("errorMessage",e.getMessage());
-		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-		    rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write(e.getMessage());
 		} catch (MonthlyGoalException e) {
-			request.setAttribute("errorMessage","Unexpected Error Occured ");
-			request.setAttribute("errorMessage",e.getMessage());
-		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-		    rd.forward(request, response);
+		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write(e.getMessage());
 		} catch (MonthlyBudgetException e) {
-			request.setAttribute("errorMessage","Unexpected Error Occured ");
-			request.setAttribute("errorMessage",e.getMessage());
-		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-		    rd.forward(request, response);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write(e.getMessage());
 		} catch (Exception e) {
-			request.setAttribute("errorMessage","An Error Occured");
-		    RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
-		    rd.forward(request, response);
+		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Unexpected Error Occured");
 			e.printStackTrace();
 		}
 	}

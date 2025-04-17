@@ -312,7 +312,7 @@
                   <div class="card-body">
                     <h4 class="card-title">Income Overview</h4>
                     <p class="card-description">Incomes of this Month</p>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                       <table class="table table-hover">
                         <thead>
                           <tr>

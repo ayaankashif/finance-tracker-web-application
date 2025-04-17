@@ -51,23 +51,25 @@ public class IncomeExpenseServlet extends HttpServlet {
 		try {
 			
 			if(incomeSource != null) {
-				incomeService.addIncomeSource(incomeSource);				
+				incomeService.addIncomeSource(incomeSource);		
+				response.getWriter().append("Income Source Added.");
 			}
 			
 			if(expenseSource != null && budgetTracker != null) {
 				expenseService.addExpenseSource(expenseSource, budgetTracker);
+				response.getWriter().append("Expense Source Added.");				
 			}
 			
-			response.getWriter().append("Source Added Successfully");
-			request.getRequestDispatcher("DashboardServlet").forward(request, response);
 
 		} catch (DataAccessException e) {
-			response.getWriter().append("Unexpected Error Occured");
-			response.getWriter().append(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Unexpected Error Occured");
 		} catch (SQLException e) {
-			response.getWriter().append("Failed to Proceed");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Failed to proceed");
 		} catch (Exception e) {
-			response.getWriter().append("\nError: Invalid input");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Unexpected Error Occured");
 			e.printStackTrace();
 		}	
 	}

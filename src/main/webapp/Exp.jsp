@@ -311,7 +311,7 @@
                   <div class="card-body">
                     <h4 class="card-title">Expense Overview</h4>
                     <p class="card-description">Expenses of this Month</p>
-                    <div class="table-responsive">
+                     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                       <table class="table table-hover">
                         <thead>
                           <tr>
@@ -389,7 +389,7 @@
          
           alert("Success: " + responseText);
           $('#expenseTableContainer').load(window.location.href + ' #expenseTableContainer>*', '');
-          $('#expenseForm')[0].reset(); m
+          $('#expenseForm')[0].reset(); 
         },
         error: function (xhr) {
         	alert("Error: " + xhr.responseText); 

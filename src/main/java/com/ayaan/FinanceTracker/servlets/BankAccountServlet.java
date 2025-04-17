@@ -55,16 +55,17 @@ public class BankAccountServlet extends HttpServlet {
 		
 		try {
 			bankAccountservice.addBankAccount(name);
-			response.getWriter().append("Bank Account Added Successfully");
-			request.getRequestDispatcher("DashboardServlet").forward(request, response);
+			response.getWriter().append("Bank Account Added.");
 
 		} catch (BankAlreadyExistException e) {
-			response.getWriter().append("Error while giving bank Account");
-			response.getWriter().append(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write(e.getMessage());
 		} catch (SQLException e) {
-			response.getWriter().append("Failed to proceed");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("Failed to proceed");
 		} catch (Exception e) {
-			response.getWriter().append("An unexpected error occurred");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		    response.getWriter().write("An unexpected error occurred");
 			e.printStackTrace();
 		}
 

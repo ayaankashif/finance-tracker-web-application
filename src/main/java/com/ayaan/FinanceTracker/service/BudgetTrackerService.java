@@ -53,13 +53,13 @@ public class BudgetTrackerService {
 
             Double goal = Double.parseDouble(monthlyGoal);
             if (goal <= 0) {
-            	throw new MonthlyGoalException("Error: Monthly Goal must be a positive number.");
+            	throw new MonthlyGoalException("Error: Monthly Goal cant be a negative number.");
             }
             
             incomeExpenseSourcesImpl.monthlyGoal(incomeSource, goal);
             Double incomeValue = incomeDAO.getIncomeBySourceFromIncomes(incomeSource);
             if (incomeValue == null) {
-                throw new DataAccessException("No expense Found!");
+                throw new DataAccessException("No income Found!");
             }
 
             return false;
@@ -70,7 +70,7 @@ public class BudgetTrackerService {
             Double totalPercentage = 0.0;
             for (BudgetTracker budgetTracker : budgetTrackerDAO.getAllBudgets()) {
                 totalPercentage += budgetTracker.getBudgetPercentage();
-                logger.info("No Budget Found! ");
+                logger.info(" No Budget Found! ");
             }
             
             double budgetValue =  Double.parseDouble(budget);
@@ -104,7 +104,7 @@ public class BudgetTrackerService {
             
             Double budget = Double.parseDouble(monthlyBudget);
                 if (budget <= 0) {
-                    throw new MonthlyBudgetException ("Error: Monthly Budget must be a positive number.");
+                    throw new MonthlyBudgetException ("Error: Monthly Budget cant be a negative number.");
                 }
 
             incomeExpenseSourcesImpl.monthlyGoal(expenseSource, budget);

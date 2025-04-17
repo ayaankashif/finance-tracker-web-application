@@ -131,5 +131,5 @@ public class IncomeExpenseSourcesDAOImpl implements IncomeExpenseSourcesDAO {
     @Override
     public List<IncomeExpenseSources> getAllIncomeExpenseSources(char type) {
         throw new UnsupportedOperationException("Unimplemented method 'getAllIncomeExpenseSources'");
-    }
+    }   
 }

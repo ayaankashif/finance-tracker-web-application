@@ -78,8 +78,9 @@ public class BudgetTrackerDAOImpl implements BudgetTrackerDAO {
             LocalDate startDate = currentMonth.atDay(1);
             LocalDate endDate = currentMonth.atEndOfMonth();
 
-            String hql = "SELECT i.name, i.income, ies.monthlyBudget FROM Income i " +
-                    "JOIN i.incomeSources ies WHERE i.date BETWEEN :startDate AND :endDate";
+            String hql = "SELECT i.name, sum(i.income), max(ies.monthlyBudget) FROM Income i " +
+                    "LEFT JOIN i.incomeSources ies WHERE i.date BETWEEN :startDate AND :endDate group by i.name";
+            
             return session.createQuery(hql, Object[].class)
                     .setParameter("startDate", Date.valueOf(startDate))
                     .setParameter("endDate", Date.valueOf(endDate))
@@ -93,8 +94,9 @@ public class BudgetTrackerDAOImpl implements BudgetTrackerDAO {
             LocalDate startDate = currentMonth.atDay(1);
             LocalDate endDate = currentMonth.atEndOfMonth();
 
-            String hql = "SELECT e.name, e.expense, ies.monthlyBudget, bt.name FROM Expense e " +
-                    "JOIN e.incomeExpenseSourceId ies LEFT JOIN ies.budgetTracker bt WHERE e.date BETWEEN :startDate AND :endDate";
+            String hql = "SELECT e.name, sum(e.expense), max(ies.monthlyBudget), bt.name FROM Expense e " +
+                    "JOIN e.incomeExpenseSourceId ies LEFT JOIN ies.budgetTracker bt WHERE e.date BETWEEN :startDate AND :endDate GROUP BY e.name, bt.name" ;
+            
             return session.createQuery(hql, Object[].class)
                     .setParameter("startDate", Date.valueOf(startDate))
                     .setParameter("endDate", Date.valueOf(endDate))

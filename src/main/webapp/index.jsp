@@ -24,7 +24,9 @@
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+	<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+     -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
@@ -34,6 +36,45 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <style>
+  #toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  .toast-message {
+    min-width: 250px;
+    margin-top: 10px;
+    padding: 12px 20px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    animation: fadein 0.5s, fadeout 0.5s 3s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  .toast-success {
+    background-color: #28a745;
+  }
+
+  .toast-error {
+    background-color: #dc3545;
+  }
+
+  @keyframes fadein {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  @keyframes fadeout {
+    from {opacity: 1;}
+    to {opacity: 0;}
+  }
+</style>
+    
   </head>
   <body class="with-welcome-text" onload="updateClock()">
   <%
@@ -424,7 +465,7 @@
                         </div>
                       </div> --%>
                       
-               <div class="col-lg-12 grid-margin stretch-card">
+               <div class="col-lg-12 grid-margin stretch-card" id= "budgetTableContainer">
                 <div class="card">
                   <div class="card-body">
                       <div class="d-flex justify-content-between align-items-center">
@@ -485,7 +526,7 @@
 				      </div>
 				      <div class="modal-body">
 				        <!-- Budget Form -->
-				        <form class="forms-sample material-form" method="post" action= "BudgetTrackerServlet" >
+				        <form id= "budgetForm" class="forms-sample material-form">
 				          <div class="mb-3">
 				            <label for="budgetName" class="form-label">Budget Category</label>
 				            <input type="text" class="form-control" id="budgetName" name="budget" placeholder="Category">
@@ -510,7 +551,7 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Bank Account</h4>
-                    <form class="forms-sample material-form" method = "post" action= "BankAccountServlet">                  
+                    <form id= "bankForm" class="forms-sample material-form" >                  
                       <div class="input-group mb-2 mr-sm-2">
                         <div class="input-group-prepend">
 						<div class="input-group-text">💳</div>                        
@@ -525,7 +566,7 @@
                 </div>
               </div>
               
-              <div class="col-lg-6 grid-margin stretch-card">
+              <div id = "bankTableContainer" class="col-lg-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title"><i class="fa-solid fa-building-columns"></i> Active Accounts</h4>               
@@ -556,7 +597,7 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Expense Source</h4>
-                    <form class="forms-sample material-form" method= "post" action= "IncomeExpenseServlet">
+                    <form class="forms-sample material-form" id= "expForm">
                     <div class="form-group" >
                       <label >Your Source</label>
                       <input type="text" class="form-control" required= "required" placeholder="Source" aria-label="Source" name = "expenseSrc" style= "border: 1px solid #d3d3d3; padding: 5px; border-radius: 4px; height: 40px;  padding-left: 15px;">
@@ -565,7 +606,7 @@
                       <label>Link your expense to one of your budgets</label>
                       <select class="js-example-basic-single w-100" name= "budgetTracker" required= "required" style="border: 1px solid #d3d3d3; padding: 5px; border-radius: 4px; height: 35px;">
                          <c:forEach var="budget" items="${budgetName}">
-        						<option>${budget.name}</option>
+        						<option>${budget.name}</option> 
     					</c:forEach>
                       </select>
                     </div>
@@ -581,7 +622,7 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title"><i class="fa-solid fa-credit-card"></i> Income Source</h4>
-                    <form class="forms-sample material-form" method= "post" action= "IncomeExpenseServlet">
+                    <form class="forms-sample material-form" id= "incForm">
                     <div class="form-group">
                       <label>Your Source</label>
                       <input type="text" class="form-control" required= "required" placeholder="Source" aria-label="Source" name= "incomeSrc" style= "border: 1px solid #d3d3d3; padding: 5px; border-radius: 4px; height: 40px; padding-left: 15px;">
@@ -867,7 +908,7 @@
                         </div>
 
                         <div class="tab-pane fade" id="audiences" role="tabpanel" aria-labelledby="profile-tab">
-                         <div class="col-lg-12 grid-margin stretch-card">
+                         <div class="col-lg-12 grid-margin stretch-card" id="GoalTableContainer">
                 			<div class="card">
                   				<div class="card-body">
 									<div class="d-flex justify-content-between align-items-center">
@@ -909,6 +950,7 @@
                     if (monthlyGoal == null) {
                         monthlyGoal = 0.0;
                     }
+    
         %>
         <tr>
             <td><%= name %></td>
@@ -949,7 +991,7 @@
 				      </div>
 				      <div class="modal-body">
 				        <!-- Budget Form -->
-				        <form class="forms-sample material-form" method="post" action= "BudgetTrackerServlet" >
+				        <form class="forms-sample material-form" id= "goalForm">
 				          <div class="mb-3">
 				            <label for="budgetName" class="form-label">Income Source</label>
 				            <input type="text" class="form-control" id="budgetName" name="incomeSource" placeholder="Source">
@@ -969,7 +1011,7 @@
 			</div>
 								
 				<div class="tab-pane fade" id="demographics" role="tabpanel" aria-labelledby="contact-tab">
-                    <div class="col-lg-12 grid-margin stretch-card">
+                    <div class="col-lg-12 grid-margin stretch-card" id= "monthlybudgetTableContainer">
            			<div class="card">
              		<div class="card-body">
 					<div class="d-flex justify-content-between align-items-center">
@@ -1008,6 +1050,10 @@
                         remaining = monthlyBudget + currentMonth;
                         progress = (Math.abs(currentMonth) / monthlyBudget) * 100;
                     }
+                    
+                    if (monthlyBudget == null) {
+                        monthlyBudget = 0.0;
+                    }
         %>
         <tr>
             <td><%= name %></td>
@@ -1043,12 +1089,12 @@
 				  <div class="modal-dialog">
 				    <div class="modal-content">
 				      <div class="modal-header">
-				        <h5 class="modal-title" id="ExpenseModalLabel">Set your Monthly Goal</h5>
+				        <h5 class="modal-title" id="ExpenseModalLabel">Set your Monthly Budget</h5>
 				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				      </div>
 				      <div class="modal-body">
 				        <!-- Budget Form -->
-				        <form class="forms-sample material-form" method="post" action= "BudgetTrackerServlet" >
+				        <form class="forms-sample material-form" id= "monthlyBudgetForm" >
 				          <div class="mb-3">
 				            <label for="budgetName" class="form-label">Expense Source</label>
 				            <input type="text" class="form-control" id="budgetName" name="expenseSource" placeholder="Source">
@@ -1066,11 +1112,11 @@
 				  </div>
 				</div>
 				
-				<div class="col-lg-6 grid-margin stretch-card">
+				<div class="col-lg-6 grid-margin stretch-card" id= "expTableContainer">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Linked Expense Sources</h4>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                       <table class="table">
                         <thead>
                           <tr>
@@ -1135,9 +1181,9 @@
     <!-- Custom js for this page-->
     <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="assets/js/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Server time -->
-    
     <%-- <script>
     let serverTime = "<%= serverTime %>";
     let parts = serverTime.split(":");
@@ -1160,7 +1206,6 @@
         setTimeout(updateClock, 1000);
     }
 </script> --%>
-
  <script>
         function updateClock() {
             let now = new Date();
@@ -1199,25 +1244,190 @@
        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function () {
-    $('#expenseForm').on('submit', function (e) {
+    $('#budgetForm').on('submit', function (e) {
       e.preventDefault();
 
       $.ajax({
-        url: 'ExpenseServlet',
+        url: 'BudgetTrackerServlet',
         type: 'POST',
         data: $(this).serialize(),
         success: function (responseText) {
-         
-          alert("Success: " + responseText);
-          $('#expenseTableContainer').load(window.location.href + ' #expenseTableContainer>*', '');
-          $('#expenseForm')[0].reset(); m
+          showToast(responseText, 'bg-success');
+       	  $('#budgetTableContainer').load(location.href + ' #budgetTableContainer > *');
+          $('#budgetForm')[0].reset();
+          refreshBudgetDropdown();
+/*           $('#budgetModal').modal('hide');  */
         },
         error: function (xhr) {
-        	alert("Error: " + xhr.responseText); 
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
+        	 /* showToast('Error', xhr.responseText, 'bg-danger'); */
         }
       });
     });
   });
 </script>
-  </body>
+
+<script>
+function refreshBudgetDropdown() {
+	  $.ajax({
+	    url: 'BudgetTrackerServlet', // or the actual URL mapping of your servlet
+	    type: 'GET',
+	    success: function (data) {
+	      const $dropdown = $('select[name="budgetTracker"]');
+ 	      $dropdown.empty(); // clear existing options 
+	      $dropdown.append(data); // append new options
+	    },
+	    error: function () {
+	      showToast('Could not refresh budget list.', 'bg-danger');
+	    }
+	  });
+	}
+</script>
+
+<!-- For Monthly Goal-->
+<script>
+  $(document).ready(function () {
+    $('#goalForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'BudgetTrackerServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+          showToast(responseText, 'bg-success');
+       	  $('#GoalTableContainer').load(location.href + ' #GoalTableContainer > *');
+          $('#goalForm')[0].reset();
+ /*          $('#budgetModal').modal('hide'); */ 
+        },
+        error: function (xhr) {
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
+        	 /* showToast('Error', xhr.responseText, 'bg-danger'); */
+        }
+      });
+    });
+  });
+</script>
+<!-- For Monthly Budget-->
+<script>
+  $(document).ready(function () {
+    $('#monthlyBudgetForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'BudgetTrackerServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+          showToast(responseText, 'bg-success');
+       	  $('#monthlybudgetTableContainer').load(location.href + ' #monthlybudgetTableContainer > *');
+          $('#monthlyBudgetForm')[0].reset();
+ /*          $('#budgetModal').modal('hide'); */ 
+        },
+        error: function (xhr) {
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
+        }
+      });
+    });
+  });
+</script>
+<!-- For BankAccount -->
+<script>
+  $(document).ready(function () {
+    $('#bankForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'BankAccountServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+          showToast(responseText, 'bg-success');
+       	  $('#bankTableContainer').load(location.href + ' #bankTableContainer > *');
+          $('#bankForm')[0].reset();
+ /*          $('#budgetModal').modal('hide'); */ 
+        },
+        error: function (xhr) {
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
+        }
+      });
+    });
+  });
+</script>
+<!-- For IncomeSource -->
+<script>
+  $(document).ready(function () {
+    $('#incForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'IncomeExpenseServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+          showToast(responseText, 'bg-success');
+ /*       	  $('#IncTableContainer').load(location.href + ' #IncTableContainer > *'); */
+          $('#incForm')[0].reset();
+        },
+        error: function (xhr) {
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
+        }
+      });
+    });
+  });
+</script>
+<!-- For ExpenseSource -->
+<script>
+  $(document).ready(function () {
+    $('#expForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: 'IncomeExpenseServlet',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (responseText) {
+          showToast(responseText, 'bg-success');
+          $('#expTableContainer').load(location.href + ' #expTableContainer > *'); 
+          $('#expForm')[0].reset();
+        },
+        error: function (xhr) {
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
+        }
+      });
+    });
+  });
+</script>
+<!-- Bootstrap Toast Container -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+  <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody">
+        <!-- Message goes here -->
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+<script>
+function showToast(message, type = 'bg-primary') {
+  const toastEl = document.getElementById('liveToast');
+  const toastBody = document.getElementById('toastBody');
+
+  // Set message and styling class
+  toastBody.textContent = message;
+  toastEl.className = `toast align-items-center text-black ${type} border-0`;
+
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
+</script>
+
+</body>
 </html>
