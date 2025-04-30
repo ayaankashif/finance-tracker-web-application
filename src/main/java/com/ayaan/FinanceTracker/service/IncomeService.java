@@ -55,11 +55,11 @@ public class IncomeService {
 			}
 
 			accountTransaction.setTransactionAmt(accountTransaction.getTransactionAmt() + Double.parseDouble(income));
+			accountTransactionImpl.addTransaction(bankAccount, "Credit", Double.parseDouble(income));
 
 			Income income1 = new Income(name, bankAccount, Double.parseDouble(income), incomeExpenseSources,
 					new Date(System.currentTimeMillis()));
 
-			accountTransactionImpl.addTransaction(bankAccount, "Credit", Double.parseDouble(income));
 
 			return incomeDAO.saveIncome(income1);
 	}

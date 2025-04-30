@@ -23,4 +23,9 @@ public interface AccountTransactionDAO {
     List<AccountTransaction> getAllTransactions();
     
     Double getTotalBankBalance();
+    
+    Double getTotalAmountByBankAccountId(int bankAccId);
+    
+    AccountTransaction getTransactionByBankAccountId(int bankAccId);
+    
 }

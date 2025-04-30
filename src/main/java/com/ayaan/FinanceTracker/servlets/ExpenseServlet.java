@@ -83,8 +83,7 @@ public class ExpenseServlet extends HttpServlet {
 		
 		try {
 			expenseService.addExpense(name, bankAccount, expense, expenseSource);
-			response.setContentType("text/plain");
-			response.getWriter().write("Expense Added Successfully.");
+			response.getWriter().append("Expense Added Successfully.");
 
 		} catch (LowBalanceException e) {
 			 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

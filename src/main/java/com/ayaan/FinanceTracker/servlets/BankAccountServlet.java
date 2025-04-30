@@ -15,6 +15,7 @@ import com.ayaan.FinanceTracker.dao.BankAccountDAO;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.BankAlreadyExistException;
 import com.ayaan.FinanceTracker.models.BankAccount;
+import com.ayaan.FinanceTracker.service.AccountTransactionService;
 import com.ayaan.FinanceTracker.service.BankAccountService;
 
 /**
@@ -24,6 +25,7 @@ import com.ayaan.FinanceTracker.service.BankAccountService;
 public class BankAccountServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	BankAccountService bankAccountservice = new BankAccountService();
+	AccountTransactionService accountTransaction = new AccountTransactionService();
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -38,11 +40,10 @@ public class BankAccountServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/BankAccount.jsp");
-		dispatcher.forward(request, response);
-
-		response.getWriter().append("Bank Servlet get is calling ");
+		
+		accountTransaction.listBankTransaction(request, response);
+		accountTransaction.bankStats(request, response);
+		request.getRequestDispatcher("bankAccount.jsp").forward(request, response);	
 	}
 
 	/**

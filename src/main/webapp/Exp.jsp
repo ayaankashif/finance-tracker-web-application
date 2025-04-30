@@ -29,6 +29,46 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="assets/images/favicon.png" />
+    
+<style>
+  #toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+
+  .toast-message {
+    min-width: 250px;
+    margin-top: 10px;
+    padding: 12px 20px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    animation: fadein 0.5s, fadeout 0.5s 3s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  .toast-success {
+    background-color: #28a745;
+  }
+
+  .toast-error {
+    background-color: #dc3545;
+  }
+
+  @keyframes fadein {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  @keyframes fadeout {
+    from {opacity: 1;}
+    to {opacity: 0;}
+  }
+</style>
+    
   </head>
   <body>
   <%
@@ -245,17 +285,30 @@
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
                  <i class="menu-icon mdi mdi-table"></i>
-                <span class="menu-title">Bank</span>
+                <span class="menu-title">Bank Account</span>
                 <i class="menu-arrow"></i>
               </a>
               <div class="collapse" id="form-elements">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="Inc.jsp">Bank</a></li>
+                  <li class="nav-item"><a class="nav-link" href="BankAccountServlet">Bank Statistics</a></li>
                 </ul>
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../../docs/documentation.html">
+              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                <i class="menu-icon mdi mdi-account-circle-outline"></i>
+                <span class="menu-title">User Pages</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="auth">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="LoginServlet"> Login </a></li>
+                  <li class="nav-item"> <a class="nav-link" href="SignupServlet"> Register </a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
                 <i class="menu-icon mdi mdi-file-document"></i>
                 <span class="menu-title">Documentation</span>
               </a>
@@ -387,16 +440,40 @@
         data: $(this).serialize(),
         success: function (responseText) {
          
-          alert("Success: " + responseText);
+          showToast(responseText, 'bg-success');
           $('#expenseTableContainer').load(window.location.href + ' #expenseTableContainer>*', '');
           $('#expenseForm')[0].reset(); 
         },
         error: function (xhr) {
-        	alert("Error: " + xhr.responseText); 
+        	const errorMsg = xhr.responseText || "Something went wrong";
+            showToast(errorMsg, 'bg-danger');
         }
       });
     });
   });
+</script>
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+  <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody">
+        <!-- Message goes here -->
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+<script>
+function showToast(message, type = 'bg-primary') {
+  const toastEl = document.getElementById('liveToast');
+  const toastBody = document.getElementById('toastBody');
+
+  // Set message and styling class
+  toastBody.textContent = message;
+  toastEl.className = `toast align-items-center text-black ${type} border-0`;
+
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
 </script>
   </body>
 </html>
