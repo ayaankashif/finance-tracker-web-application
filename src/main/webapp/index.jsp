@@ -316,7 +316,7 @@
               </a>
               <div class="collapse" id="tables" >
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="basic-table.html">Active Banks</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="BankAccountServlet">Bank Statistics</a></li>
                 </ul>
               </div>
             </li>
@@ -333,36 +333,8 @@
                 </ul>
               </div>
             </li>
-            <!-- <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
-                <i class="menu-icon mdi mdi-table"></i>
-                <span class="menu-title">Bank</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="tables">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="basic-table.html">Link Banks</a></li>
-                </ul>
-              </div>
-            </li> -->
-            <!-- <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                <i class="menu-icon mdi mdi-account-circle-outline"></i>
-                <span class="menu-title">User Pages</span>
-                <i class="menu-arrow"></i>
-              </a>
-              <div class="collapse" id="auth">
-                <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                  <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
-                </ul>
-              </div>
-            </li> -->
             <li class="nav-item">
-              <a class="nav-link" href="documentation.html">
+              <a class="nav-link" href="#">
                 <i class="menu-icon mdi mdi-file-document"></i>
                 <span class="menu-title">Documentation</span>
               </a>
@@ -634,279 +606,8 @@
                   </div>
                 </div>
               </div>               
-                          <!-- <div class="row flex-grow">
-                            <div class="col-12 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body">
-                                  <div class="d-sm-flex justify-content-between align-items-start">
-                                    <div>
-                                      <h4 class="card-title card-title-dash">Pending Requests</h4>
-                                      <p class="card-subtitle card-subtitle-dash">You have 50+ new requests</p>
-                                    </div>
-                                    <div>
-                                      <button class="btn btn-primary btn-lg text-white mb-0 me-0" type="button"><i class="mdi mdi-account-plus"></i>Add new member</button>
-                                    </div>
-                                  </div>
-                                  <div class="table-responsive  mt-1">
-                                    <table class="table select-table">
-                                      <thead>
-                                        <tr>
-                                          <th>
-                                            <div class="form-check form-check-flat mt-0">
-                                              <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" aria-checked="false" id="check-all"><i class="input-helper"></i></label>
-                                            </div>
-                                          </th>
-                                          <th>Customer</th>
-                                          <th>Company</th>
-                                          <th>Progress</th>
-                                          <th>Status</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                          <td>
-                                            <div class="form-check form-check-flat mt-0">
-                                              <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="d-flex ">
-                                              <img src="assets/images/faces/face1.jpg" alt="">
-                                              <div>
-                                                <h6>Brandon Washington</h6>
-                                                <p>Head admin</p>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <h6>Company name 1</h6>
-                                            <p>company type</p>
-                                          </td>
-                                          <td>
-                                            <div>
-                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                <p class="text-success">79%</p>
-                                                <p>85/162</p>
-                                              </div>
-                                              <div class="progress progress-md">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="badge badge-opacity-warning">In progress</div>
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td>
-                                            <div class="form-check form-check-flat mt-0">
-                                              <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="d-flex">
-                                              <img src="assets/images/faces/face2.jpg" alt="">
-                                              <div>
-                                                <h6>Laura Brooks</h6>
-                                                <p>Head admin</p>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <h6>Company name 1</h6>
-                                            <p>company type</p>
-                                          </td>
-                                          <td>
-                                            <div>
-                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                <p class="text-success">65%</p>
-                                                <p>85/162</p>
-                                              </div>
-                                              <div class="progress progress-md">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="badge badge-opacity-warning">In progress</div>
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td>
-                                            <div class="form-check form-check-flat mt-0">
-                                              <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="d-flex">
-                                              <img src="assets/images/faces/face3.jpg" alt="">
-                                              <div>
-                                                <h6>Wayne Murphy</h6>
-                                                <p>Head admin</p>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <h6>Company name 1</h6>
-                                            <p>company type</p>
-                                          </td>
-                                          <td>
-                                            <div>
-                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                <p class="text-success">65%</p>
-                                                <p>85/162</p>
-                                              </div>
-                                              <div class="progress progress-md">
-                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 38%" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100"></div>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="badge badge-opacity-warning">In progress</div>
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td>
-                                            <div class="form-check form-check-flat mt-0">
-                                              <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="d-flex">
-                                              <img src="assets/images/faces/face4.jpg" alt="">
-                                              <div>
-                                                <h6>Matthew Bailey</h6>
-                                                <p>Head admin</p>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <h6>Company name 1</h6>
-                                            <p>company type</p>
-                                          </td>
-                                          <td>
-                                            <div>
-                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                <p class="text-success">65%</p>
-                                                <p>85/162</p>
-                                              </div>
-                                              <div class="progress progress-md">
-                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="badge badge-opacity-danger">Pending</div>
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td>
-                                            <div class="form-check form-check-flat mt-0">
-                                              <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" aria-checked="false"><i class="input-helper"></i></label>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="d-flex">
-                                              <img src="assets/images/faces/face5.jpg" alt="">
-                                              <div>
-                                                <h6>Katherine Butler</h6>
-                                                <p>Head admin</p>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <h6>Company name 1</h6>
-                                            <p>company type</p>
-                                          </td>
-                                          <td>
-                                            <div>
-                                              <div class="d-flex justify-content-between align-items-center mb-1 max-width-progress-wrap">
-                                                <p class="text-success">65%</p>
-                                                <p>85/162</p>
-                                              </div>
-                                              <div class="progress progress-md">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                                              </div>
-                                            </div>
-                                          </td>
-                                          <td>
-                                            <div class="badge badge-opacity-success">Completed</div>
-                                          </td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div> -->
-							<!-- <div class="row flex-grow">
-                            <div class="col-md-6 col-lg-6 grid-margin stretch-card">
-                              <div class="card card-rounded">
-                                <div class="card-body card-rounded">
-                                  <h4 class="card-title  card-title-dash">Recent Events</h4>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Change in Directors </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Other Events </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Quarterly Report </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center border-bottom py-2">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-2 fw-medium"> Change in Directors </p>
-                                      <div class="d-flex justify-content-between align-items-center">
-                                        <div class="d-flex align-items-center">
-                                          <i class="mdi mdi-calendar text-muted me-1"></i>
-                                          <p class="mb-0 text-small text-muted">Mar 14, 2019</p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="list align-items-center pt-3">
-                                    <div class="wrapper w-100">
-                                      <p class="mb-0">
-                                        <a href="#" class="fw-bold text-primary">Show all <i class="mdi mdi-arrow-right ms-2"></i></a>
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div> -->
-                          </div>
+                       </div>
                         </div>
-
                         <div class="tab-pane fade" id="audiences" role="tabpanel" aria-labelledby="profile-tab">
                          <div class="col-lg-12 grid-margin stretch-card" id="GoalTableContainer">
                 			<div class="card">
@@ -964,7 +665,7 @@
             } catch (DataAccessException e) {
         %>
         <tr>
-            <td colspan="5" style="color: red; text-align: center;">Error: <%= e.getMessage() %></td>
+            <td colspan="5" style="color: red; text-align: center;"><%= e.getMessage() %></td>
         </tr>
         <%
             } catch (Exception e) {
@@ -1054,6 +755,10 @@
                     if (monthlyBudget == null) {
                         monthlyBudget = 0.0;
                     }
+                    
+                    if(budgetName == null){
+                    	budgetName = "Not Categorized";
+                    }
         %>
         <tr>
             <td><%= name %></td>
@@ -1068,7 +773,7 @@
             } catch (DataAccessException e) {
         %>
         <tr>
-            <td colspan="6" style="color: red; text-align: center;">Error: <%= e.getMessage() %></td>
+            <td colspan="6" style="color: red; text-align: center;"><%= e.getMessage() %></td>
         </tr>
         <%
             } catch (Exception e) {
@@ -1111,7 +816,7 @@
 				    </div>
 				  </div>
 				</div>
-				
+		
 				<div class="col-lg-6 grid-margin stretch-card" id= "expTableContainer">
                 <div class="card">
                   <div class="card-body">
@@ -1120,8 +825,8 @@
                       <table class="table">
                         <thead>
                           <tr>
-                            <th>Expense Name</th>
                             <th>Expense Source</th>
+                            <th>Budget</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1137,7 +842,6 @@
                   </div>
                 </div>
               </div>
-			
 			</div>
                         
                  

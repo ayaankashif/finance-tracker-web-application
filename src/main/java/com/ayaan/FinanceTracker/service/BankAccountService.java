@@ -1,5 +1,6 @@
 	package com.ayaan.FinanceTracker.service;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
@@ -12,11 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ayaan.FinanceTracker.daoImpl.AccountTransactionDAOImpl;
+import com.ayaan.FinanceTracker.dao.AccountTransactionDAO;
 import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.BankAlreadyExistException;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.exceptionHandling.InvalidIDException;
 import com.ayaan.FinanceTracker.exceptionHandling.invalidInputException;
+import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
 
 public class BankAccountService {
@@ -24,6 +28,7 @@ public class BankAccountService {
 
     BankAccountDAOImpl bankAccountDAO = new BankAccountDAOImpl();
     AccountTransactionService accountTransactionImpl = new AccountTransactionService();
+    AccountTransactionDAO accountTransactionDAO = new AccountTransactionDAOImpl();
     
     public boolean addBankAccount(String bankName) throws BankAlreadyExistException, SQLException {
     	
@@ -34,7 +39,14 @@ public class BankAccountService {
             
             bankAccount = new BankAccount(bankName, new Date(System.currentTimeMillis()));
             bankAccountDAO.saveBankAccount(bankAccount);
-            accountTransactionImpl.addTransaction(bankAccount, null, 0.0);
+            
+            AccountTransaction accountTransaction = accountTransactionDAO.getTransactionByBankAccountId(bankAccount.getBankAccId());
+            
+            if (accountTransaction == null) {
+                accountTransaction = new AccountTransaction();
+                accountTransaction.setTransactionAmt(0.0);
+                accountTransaction.setBankAccId(bankAccount);
+            }
             
             logger.info("Bank Account Added");
         
@@ -61,7 +73,7 @@ public class BankAccountService {
         }
     }
 
-    public void listBankAccount(HttpServletRequest request, HttpServletResponse response) {
+    public void listBankAccount(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             List<BankAccount> bank = bankAccountDAO.getAllBankAccounts();
             if (bank == null) {
@@ -70,16 +82,6 @@ public class BankAccountService {
             
             request.setAttribute("bankName", bank);
             
-			/*
-			 * System.out.println("Bank Account List: ");
-			 * System.out.printf("%-15s %-14s %-15s%n", "Bank ID", "Bank Name",
-			 * "Account Date");
-			 * System.out.println("----------------------------------------------");
-			 * bank.forEach(bankAccount -> System.out.printf("%-15s %-14s %-15s%n",
-			 * bankAccount.getBankAccId(), bankAccount.getName(),
-			 * bankAccount.getAccountDate()));
-			 */
-
         } catch (DataAccessException e) {
             logger.error("Database error while fetching income sources: {}", e.getMessage());
         } catch (Exception e) {

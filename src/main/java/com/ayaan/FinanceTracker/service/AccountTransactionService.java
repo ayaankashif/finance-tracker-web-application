@@ -1,11 +1,18 @@
 package com.ayaan.FinanceTracker.service;
 
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import com.ayaan.FinanceTracker.daoImpl.AccountTransactionDAOImpl;
+import com.ayaan.FinanceTracker.daoImpl.BankAccountDAOImpl;
 import com.ayaan.FinanceTracker.exceptionHandling.DataAccessException;
 import com.ayaan.FinanceTracker.models.AccountTransaction;
 import com.ayaan.FinanceTracker.models.BankAccount;
@@ -29,57 +36,36 @@ public class AccountTransactionService {
         }
     }
 
-    public void listBankTransaction() {
+    public void listBankTransaction(HttpServletRequest request, HttpServletResponse response) throws IOException  {
         try {
             List<Object[]> transaction = accountTransactionDAO.getBankTransaction();
             if (transaction == null || transaction.isEmpty()) {
                 throw new DataAccessException("No Bank Transactions Found.");
             }
-
-            System.out.println("\nBank Transaction List:");
-            System.out.printf("%-15s %-15s %-15s%n",
-                "Bank Name", "Amount", "Transaction Type");
-            System.out.println("------------------------------------------");
-            for (Object[] record : transaction) {
-                String bankName = (String) record[0];
-                Double transactionAmt = (Double) record[1];
-                String transactionType = (String) record[2];
-
-                System.out.printf("%-15s %-15s %-15s%n", bankName, transactionAmt, transactionType);
-            }
-
+            
+            request.setAttribute("transaction", transaction);
+            
         } catch (DataAccessException e) {
+        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        	response.getWriter().write("Failed to Proceed");
             logger.error("Database error while fetching income sources: {}", e.getMessage());
         } catch (Exception e) {
+        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        	response.getWriter().write("An unexpected error occured!");
             logger.error("An unexpected error occured: {}", e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public void bankStats(){
+    public void bankStats(HttpServletRequest request, HttpServletResponse response) throws IOException{
         try {
             List<Object[]> transaction = accountTransactionDAO.accountDashboard();
             if (transaction == null || transaction.isEmpty()) {
                 throw new DataAccessException("No Bank Stats to show.");
             }
-
-            System.out.println("\nDashboard: ");
-            System.out.printf("%-12s %-17s %-15s%n",
-                "Bank ID ", "Bank Name ", "Amount");
-            System.out.println("-----------------------------------");
-            for (Object[] record : transaction) {
-                Integer BankId = (Integer) record [0];
-                String bankName = (String) record[1];
-                Double transactionAmt  =  (Double) record[2];
-
-                if (transactionAmt < 0 ){
-                    transactionAmt  = 0.0;
-                }
-                
-                System.out.printf("%-12s %-17s %-15s%n" , 
-                            BankId, bankName, transactionAmt);
-            }
-
+            
+	        request.setAttribute("stats", transaction);
+            
         } catch (DataAccessException e) {
             logger.error("Database error while fetching income sources: {}", e.getMessage());
         } catch (Exception e) {

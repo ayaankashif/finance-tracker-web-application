@@ -133,7 +133,7 @@ public class BudgetTrackerService {
         }
     }
 
-    public void budgetOverview(HttpServletRequest request, HttpServletResponse response) {
+    public void budgetOverview(HttpServletRequest request, HttpServletResponse response) throws IOException {
     	
     	 try {
              List<BudgetTracker> budgets = budgetTrackerDAO.getAllBudgets();
@@ -185,11 +185,12 @@ public class BudgetTrackerService {
              request.setAttribute("budgetData", budgetData);
              
          } catch (DataAccessException e) {
-             request.setAttribute("errorMessage", "Database access error: " + e.getMessage());
-//             request.getRequestDispatcher("/error.jsp").forward(request, response);
+        	 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        	 response.getWriter().write("Database error occurred.");
+        	 logger.error("Database access error: {}", e.getMessage());
          } catch (Exception e) {
-             request.setAttribute("errorMessage", "An error occurred while fetching budget data.");
-//             request.getRequestDispatcher("/error.jsp").forward(request, response);
+        	 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+ 		     response.getWriter().write("An Error Occured!");
          }  	 
     }
 
@@ -202,7 +203,7 @@ public class BudgetTrackerService {
             request.setAttribute("budgetTrackerExpense", budgetTracker);
             
         } catch (DataAccessException e) {
-            logger.error("Database access error: {}", e.getMessage());
+        	logger.error("Database access error: {}", e.getMessage());
         } catch (Exception e) {
             logger.error("An error occurred while fetching bank transactions.");
             e.printStackTrace();

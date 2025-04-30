@@ -54,14 +54,14 @@ public class ExpenseService {
                 if (bankAccount == null) {
                     throw new DataAccessException(
                             "\nError: No Bank account found. Please enter a valid bank account name.");
-                } else {
-                	accountTransaction = accountTransactionDAO.getTransactionById(bankAccount.getBankAccId());
-                	if(accountTransaction.getTransactionAmt() == null || accountTransaction.getTransactionAmt() <= 0) {
-                		throw new LowBalanceException("Warning: Low Balance in account " + bankAccount.getName() + ". Please add funds.");
-                	}
-                	
                 }
-
+                
+                Double balance = accountTransactionDAO.getTotalAmountByBankAccountId(bankAccount.getBankAccId());
+                double current = Math.abs(expenseValue);
+                if (balance == null || current > balance || balance == 0.0) {
+                    throw new LowBalanceException("Low Balance in account " + bankAccount.getName() + ". Please add funds.");
+                }
+                
             IncomeExpenseSources incomeExpenseSources = null;
                 incomeExpenseSources = incomeExpenseSourcesDAO.getIncomeExpenseSourceByCondition(expenseSource);
                 if (incomeExpenseSources == null) {

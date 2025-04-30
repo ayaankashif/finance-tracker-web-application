@@ -90,9 +90,12 @@ public class AccountTransactionDAOImpl implements AccountTransactionDAO {
             LocalDate startDate = currentMonth.atDay(1);
             LocalDate endDate = currentMonth.atEndOfMonth();
 
-            String hql = "SELECT ba.bankAccId, ba.name, sum(at.transactionAmt) FROM AccountTransaction at " +
-                    "JOIN at.bankAccId ba WHERE at.transactionDate BETWEEN :startDate AND :endDate " +
-                    "GROUP BY at.bankAccId";
+            String hql = "SELECT b.bankAccId, b.name, COALESCE(SUM(t.transactionAmt), 0) "
+                    + "FROM AccountTransaction t "
+                    + "RIGHT JOIN t.bankAccId b "
+                    + "WITH t.transactionDate BETWEEN :startDate AND :endDate "
+                    + "GROUP BY b.bankAccId, b.name";
+
             return session.createQuery(hql, Object[].class)
                     .setParameter("startDate", Date.valueOf(startDate))
                     .setParameter("endDate", Date.valueOf(endDate))
@@ -152,20 +155,33 @@ public class AccountTransactionDAOImpl implements AccountTransactionDAO {
 		
 			return result != null ? result : 0.0;
 		 }
-		}
-	}
-		/*
-		 * Query query = session.createQuery(hql);
-		 * query.setParameter("startDate","2025-02-01"); query.setParameter("endDate",
-		 * "2025-02-28");
-		 */
+	 }
+	
+	public Double getTotalAmountByBankAccountId(int bankAccId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()){
+            String hql = "SELECT sum(at.transactionAmt) FROM AccountTransaction at WHERE at.bankAccId.bankAccId = :bankAccId GROUP BY at.bankAccId";
+            return session.createQuery(hql, Double.class)
+                    .setParameter("bankAccId", bankAccId)
+                    .uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public AccountTransaction getTransactionByBankAccountId(int bankAccId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()){
+            String hql = "FROM AccountTransaction at WHERE at.bankAccId.bankAccId = :bankAccId";
+            return session.createQuery(hql, AccountTransaction.class)
+                    .setParameter("bankAccId", bankAccId)
+                    .uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }	
+}
 		
-		
-//		Long totalBalance = (Long) query.uniqueResult();
-		/*
-		 * Query query = session.createQuery(hql); query.setParameter("startDate",
-		 * "2025-02-01"); query.setParameter("endDate", "2025-02-28");
-		 */
 
 	
 	
